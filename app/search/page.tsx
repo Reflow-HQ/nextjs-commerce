@@ -16,9 +16,9 @@ export default async function SearchPage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const { sort, q: searchValue } = searchParams as { [key: string]: string };
-  const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
+  const { orderKey } = sorting.find((item) => item.slug === sort) || defaultSort;
 
-  const products = await getProducts({ sortKey, reverse, query: searchValue });
+  const products = await getProducts({ order: orderKey, search: searchValue || '' });
   const resultsText = products.length > 1 ? 'results' : 'result';
 
   return (

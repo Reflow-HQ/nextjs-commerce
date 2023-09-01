@@ -5,17 +5,14 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   Cart,
-  Category,
-  Collection,
   Connection,
-  Image,
   Menu,
-  Product,
+  ReflowCategory,
   ReflowPaginatedProductsResponse,
+  ReflowProduct,
   ReflowProductsRequestBody,
-  ShopifyCart,
-  ShopifyCollection,
-  ShopifyCollectionsOperation
+  SearchCategory,
+  ShopifyCart
 } from './types';
 
 const key = process.env.REFLOW_API_KEY!;
@@ -99,45 +96,6 @@ const reshapeCart = (cart: ShopifyCart): Cart => {
   };
 };
 
-const reshapeCollection = (collection: ShopifyCollection): Collection | undefined => {
-  if (!collection) {
-    return undefined;
-  }
-
-  return {
-    ...collection,
-    path: `/search/${collection.handle}`
-  };
-};
-
-const reshapeCollections = (collections: ShopifyCollection[]) => {
-  const reshapedCollections = [];
-
-  for (const collection of collections) {
-    if (collection) {
-      const reshapedCollection = reshapeCollection(collection);
-
-      if (reshapedCollection) {
-        reshapedCollections.push(reshapedCollection);
-      }
-    }
-  }
-
-  return reshapedCollections;
-};
-
-const reshapeImages = (images: Connection<Image>, productTitle: string) => {
-  const flattened = removeEdgesAndNodes(images);
-
-  return flattened.map((image) => {
-    const filename = image.url.match(/.*\/(.*)\..*/)[1];
-    return {
-      ...image,
-      altText: image.altText || `${productTitle} - ${filename}`
-    };
-  });
-};
-
 export async function createCart(): Promise<Cart> {
   const res = await shopifyFetch<ShopifyCreateCartOperation>({
     query: createCartMutation,
@@ -218,7 +176,9 @@ export async function getCollection(handle: string): Promise<Collection | undefi
   return reshapeCollection(res.body.data.collection);
 }
 
-export async function getProducts(requestBody: ReflowProductsRequestBody): Promise<Product[]> {
+export async function getProducts(
+  requestBody: ReflowProductsRequestBody
+): Promise<ReflowProduct[]> {
   const res = await reflowFetch<ReflowPaginatedProductsResponse>({
     method: 'GET',
     endpoint: 'products/',
@@ -229,39 +189,40 @@ export async function getProducts(requestBody: ReflowProductsRequestBody): Promi
   return products;
 }
 
-export async function getCollections(): Promise<Collection[]> {
-  const res = await shopifyFetch<ShopifyCollectionsOperation>({
-    query: getCollectionsQuery,
-    tags: [TAGS.collections]
+export async function getCategories(): Promise<SearchCategory[]> {
+  let reflowCategories = await reflowFetch<ReflowCategory[]>({
+    method: 'GET',
+    endpoint: 'categories/'
   });
-  const shopifyCollections = removeEdgesAndNodes(res.body?.data?.collections);
-  const collections = [
+  const categories = [
     {
       handle: '',
       title: 'All',
-      description: 'All products',
       seo: {
-        title: 'All',
-        description: 'All products'
+        title: 'All'
       },
       path: '/search',
       updatedAt: new Date().toISOString()
     },
-    // Filter out the `hidden` collections.
-    // Collections that start with `hidden-*` need to be hidden on the search page.
-    ...reshapeCollections(shopifyCollections).filter(
-      (collection) => !collection.handle.startsWith('hidden')
-    )
+    ...reflowCategories.body.map((category: ReflowCategory) => ({
+      handle: category.id,
+      title: category.name,
+      seo: {
+        title: category.name
+      },
+      path: `/search/${category.id}`,
+      updatedAt: new Date().toISOString()
+    }))
   ];
 
-  return collections;
+  return categories;
 }
 
-export async function getCategoriesMenu(): Promise<Menu[]> {
-  const menuCategories = process.env.MENU_CATEGORIES?.split(',') || [];
-  const productsPath = '/products/';
+export async function getNavigationMenu(): Promise<Menu[]> {
+  const navigation = process.env.NAV_CATEGORIES?.split(',') || [];
+  const pagePath = '/search/';
 
-  let reflowCategories = await reflowFetch<Category[]>({
+  let reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
     endpoint: 'categories/'
   });
@@ -269,27 +230,27 @@ export async function getCategoriesMenu(): Promise<Menu[]> {
   let menuItems = [
     {
       title: 'All Products',
-      path: productsPath
+      path: pagePath
     }
   ];
 
-  for (const menuCategory of menuCategories) {
-    let category = reflowCategories.body.find((cat) => cat.id == menuCategory);
+  for (const navCategory of navigation) {
+    let category = reflowCategories.body.find((cat) => cat.id == navCategory);
     if (!category) {
-      console.error(`Cannot find menu category with reflow id ${menuCategory}`);
+      console.error(`Cannot find menu category with reflow id ${navCategory}`);
       continue;
     }
     menuItems.push({
       title: category.name,
-      path: `${productsPath}/category/${category.id}`
+      path: `${pagePath}/${category.id}`
     });
   }
 
   return menuItems;
 }
 
-export async function getProduct(handle: string): Promise<Product | undefined> {
-  const res = await reflowFetch<Product>({
+export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {
+  const res = await reflowFetch<ReflowProduct>({
     method: 'GET',
     endpoint: 'products/' + handle
   });

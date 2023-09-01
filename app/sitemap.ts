@@ -1,5 +1,7 @@
-import { getCollections, getProducts } from 'lib/reflow';
+import { getCategories, getProducts } from 'lib/reflow';
 import { MetadataRoute } from 'next';
+
+// TODO: this file
 
 type Route = {
   url: string;
@@ -16,10 +18,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date().toISOString()
   }));
 
-  const collectionsPromise = getCollections().then((collections) =>
-    collections.map((collection) => ({
-      url: `${baseUrl}${collection.path}`,
-      lastModified: collection.updatedAt
+  const categoriesPromise = getCategories().then((categories) =>
+    categories.map((category) => ({
+      url: `${baseUrl}${category.path}`,
+      lastModified: category.updatedAt
     }))
   );
 
@@ -33,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let fetchedRoutes: Route[] = [];
 
   try {
-    fetchedRoutes = (await Promise.all([collectionsPromise, productsPromise, pagesPromise])).flat();
+    fetchedRoutes = (await Promise.all([categoriesPromise, productsPromise])).flat();
   } catch (error) {
     throw JSON.stringify(error, null, 2);
   }

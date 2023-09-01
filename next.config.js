@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+/** TODO: research this and avoid nextjs image optimization, use cloudflare CDN instead */
+
 module.exports = {
   eslint: {
     // Disabling on production builds because we're running checks on PRs via GitHub Actions.

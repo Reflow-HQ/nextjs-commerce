@@ -1,7 +1,7 @@
 import Cart from 'components/cart';
 import OpenCart from 'components/cart/open-cart';
 import LogoSquare from 'components/logo-square';
-import { getCategoriesMenu } from 'lib/reflow';
+import { getNavigationMenu } from 'lib/reflow';
 import { Menu } from 'lib/reflow/types';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -10,7 +10,7 @@ import Search from './search';
 const { SITE_NAME } = process.env;
 
 export default async function Navbar() {
-  const menu = await getCategoriesMenu();
+  const menu = await getNavigationMenu();
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">

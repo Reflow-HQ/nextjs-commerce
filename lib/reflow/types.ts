@@ -34,14 +34,24 @@ export type Media =
       url: string;
     };
 
-export type Category = {
+export type ReflowCategory = {
   object: 'category';
   id: string;
   name: string;
   subcategories: object[];
 };
 
-export type Product = {
+export type SearchCategory = {
+  handle: string;
+  title: string;
+  seo: {
+    title: string;
+  };
+  path: string;
+  updatedAt: string;
+};
+
+export type ReflowProduct = {
   object: 'product';
   id: string;
   name: string;
@@ -58,7 +68,7 @@ export type Product = {
   image: ImageSources;
   media: Media[];
   variants: object;
-  categories: Category[];
+  categories: ReflowCategory[];
   inventory_type: string;
   in_stock: boolean;
   available_quantity?: number;
@@ -87,7 +97,7 @@ export type ReflowProductsRequestBody = {
 };
 
 export type ReflowPaginatedProductsResponse = {
-  data: Product[];
+  data: ReflowProduct[];
   links: object; // Pagination links
   meta: object; // Pagination metadata
 };
@@ -111,12 +121,8 @@ export type CartItem = {
       name: string;
       value: string;
     }[];
-    product: Product;
+    product: ReflowProduct;
   };
-};
-
-export type Collection = ShopifyCollection & {
-  path: string;
 };
 
 export type Menu = {
@@ -161,14 +167,6 @@ export type ShopifyCart = {
   };
   lines: Connection<CartItem>;
   totalQuantity: number;
-};
-
-export type ShopifyCollection = {
-  handle: string;
-  title: string;
-  description: string;
-  seo: SEO;
-  updatedAt: string;
 };
 
 export type ShopifyCartOperation = {
@@ -224,20 +222,5 @@ export type ShopifyUpdateCartOperation = {
       merchandiseId: string;
       quantity: number;
     }[];
-  };
-};
-
-export type ShopifyCollectionOperation = {
-  data: {
-    collection: ShopifyCollection;
-  };
-  variables: {
-    handle: string;
-  };
-};
-
-export type ShopifyCollectionsOperation = {
-  data: {
-    collections: Connection<ShopifyCollection>;
   };
 };

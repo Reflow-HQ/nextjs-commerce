@@ -1,4 +1,4 @@
-import { getCollection, getCollectionProducts } from 'lib/reflow';
+import { getProducts } from 'lib/reflow';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -11,16 +11,24 @@ export const runtime = 'edge';
 export async function generateMetadata({
   params
 }: {
-  params: { collection: string };
+  params: { category: string };
 }): Promise<Metadata> {
-  const collection = await getCollection(params.collection);
+  return {
+    title: 'Category name',
+    description: 'Category description'
+  };
 
-  if (!collection) return notFound();
+  // TODO: add get category API route
+  // TODO: add handles to categories
+  // TODO: add descriptions to categories
+
+  const category = await getCategory(params.category);
+
+  if (!category) return notFound();
 
   return {
-    title: collection.seo?.title || collection.title,
-    description:
-      collection.seo?.description || collection.description || `${collection.title} products`
+    title: category.seo?.title || category.title,
+    description: category.seo?.description || category.description || `${category.title} products`
   };
 }
 
@@ -28,17 +36,17 @@ export default async function CategoryPage({
   params,
   searchParams
 }: {
-  params: { collection: string };
+  params: { category: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const { sort } = searchParams as { [key: string]: string };
-  const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
-  const products = await getCollectionProducts({ collection: params.collection, sortKey, reverse });
+  const { orderKey } = sorting.find((item) => item.slug === sort) || defaultSort;
+  const products = await getProducts({ category: params.category, order: orderKey });
 
   return (
     <section>
       {products.length === 0 ? (
-        <p className="py-3 text-lg">{`No products found in this collection`}</p>
+        <p className="py-3 text-lg">{`No products found in this category`}</p>
       ) : (
         <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <ProductGridItems products={products} />

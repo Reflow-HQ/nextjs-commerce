@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import FooterMenu from 'components/layout/footer-menu';
 import LogoSquare from 'components/logo-square';
-import { getCategoriesMenu } from 'lib/reflow';
+import { getNavigationMenu } from 'lib/reflow';
 import { Suspense } from 'react';
 
 const { COMPANY_NAME, SITE_NAME } = process.env;
@@ -12,7 +12,7 @@ export default async function Footer() {
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '');
   const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700';
   const menu = [
-    ...(await getCategoriesMenu()),
+    ...(await getNavigationMenu()),
     { title: 'About Reflow', path: 'https://reflowhq.com/' },
     { title: 'Reflow Docs', path: 'https://reflowhq.com/docs' }
   ];

@@ -73,6 +73,22 @@ export default async function ProductPage({ params }: { params: { handle: string
     }
   };
 
+  let galleryImages: { src: string; altText: string }[] = [
+    {
+      src: product.image.lg,
+      altText: product.name
+    }
+  ];
+  let mediaImages = product.media.filter((m: Media) => m.type == 'image');
+  if (mediaImages.length) {
+    galleryImages = mediaImages.map((m: Media) => {
+      return {
+        src: m.src.lg,
+        altText: product.name
+      };
+    });
+  }
+
   return (
     <>
       <script
@@ -86,14 +102,7 @@ export default async function ProductPage({ params }: { params: { handle: string
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Gallery
               // TODO video
-              images={product.media
-                .filter((m: Media) => m.type == 'image')
-                .map((m: Media) => {
-                  return {
-                    src: m.src.lg,
-                    altText: product.name
-                  };
-                })}
+              images={galleryImages}
             />
           </div>
 

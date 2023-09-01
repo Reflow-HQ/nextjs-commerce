@@ -1,6 +1,6 @@
 import { GridTileImage } from 'components/grid/tile';
 import { getProducts } from 'lib/reflow';
-import type { Product } from 'lib/reflow/types';
+import type { ReflowProduct } from 'lib/reflow/types';
 import Link from 'next/link';
 
 function ThreeItemGridItem({
@@ -8,7 +8,7 @@ function ThreeItemGridItem({
   size,
   priority
 }: {
-  item: Product;
+  item: ReflowProduct;
   size: 'full' | 'half';
   priority?: boolean;
 }) {
@@ -41,8 +41,6 @@ function ThreeItemGridItem({
 }
 
 export async function ThreeItemGrid() {
-  // TODO: hidden search items
-
   const homepageItems = await getProducts({
     category: process.env.FEATURED_PRODUCTS_CATEGORY,
     page: 1,

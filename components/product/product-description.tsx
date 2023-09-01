@@ -1,8 +1,8 @@
 import Price from 'components/price';
 import Prose from 'components/prose';
-import { Product } from 'lib/reflow/types';
+import { ReflowProduct } from 'lib/reflow/types';
 
-export function ProductDescription({ product }: { product: Product }) {
+export function ProductDescription({ product }: { product: ReflowProduct }) {
   return (
     <>
       <div className="mb-6 flex flex-col border-b pb-6 dark:border-neutral-700">

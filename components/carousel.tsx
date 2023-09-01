@@ -3,8 +3,6 @@ import Link from 'next/link';
 import { GridTileImage } from './grid/tile';
 
 export async function Carousel() {
-  // TODO: hidden search items
-  // Collections that start with `hidden-*` are hidden from the search page.
   const products = await getProducts({ page: 1 });
 
   if (!products?.length) return null;
