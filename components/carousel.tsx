@@ -1,10 +1,11 @@
-import { getCollectionProducts } from 'lib/reflow';
+import { getProducts } from 'lib/reflow';
 import Link from 'next/link';
 import { GridTileImage } from './grid/tile';
 
 export async function Carousel() {
+  // TODO: hidden search items
   // Collections that start with `hidden-*` are hidden from the search page.
-  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' });
+  const products = await getProducts({ page: 1 });
 
   if (!products?.length) return null;
 
@@ -21,13 +22,13 @@ export async function Carousel() {
           >
             <Link href={`/product/${product.handle}`} className="relative h-full w-full">
               <GridTileImage
-                alt={product.title}
+                alt={product.name}
                 label={{
-                  title: product.title,
-                  amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode
+                  title: product.name,
+                  amount: product.price_range.sort()[0],
+                  currency: product.currency
                 }}
-                src={product.featuredImage?.url}
+                src={product.image.md}
                 fill
                 sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
               />

@@ -1,28 +1,8 @@
-import { HIDDEN_PRODUCT_TAG, SHOPIFY_GRAPHQL_API_ENDPOINT, TAGS } from 'lib/constants';
-import { isShopifyError } from 'lib/type-guards';
-import { ensureStartsWith } from 'lib/utils';
+import { HIDDEN_PRODUCT_TAG, REFLOW_API_URL, TAGS } from 'lib/constants';
+import { ReflowApiError } from 'lib/type-guards';
 import { revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  addToCartMutation,
-  createCartMutation,
-  editCartItemsMutation,
-  removeFromCartMutation
-} from './mutations/cart';
-import { getCartQuery } from './queries/cart';
-import {
-  getCollectionProductsQuery,
-  getCollectionQuery,
-  getCollectionsQuery
-} from './queries/collection';
-import { getMenuQuery } from './queries/menu';
-import { getPageQuery, getPagesQuery } from './queries/page';
-import {
-  getProductQuery,
-  getProductRecommendationsQuery,
-  getProductsQuery
-} from './queries/product';
 import {
   Cart,
   Collection,
@@ -31,66 +11,61 @@ import {
   Menu,
   Page,
   Product,
-  ShopifyAddToCartOperation,
+  ReflowCategoriesResponse,
+  ReflowProductsRequestBody,
+  ReflowProductsResponse,
   ShopifyCart,
-  ShopifyCartOperation,
   ShopifyCollection,
-  ShopifyCollectionOperation,
-  ShopifyCollectionProductsOperation,
   ShopifyCollectionsOperation,
-  ShopifyCreateCartOperation,
-  ShopifyMenuOperation,
   ShopifyPageOperation,
   ShopifyPagesOperation,
   ShopifyProduct,
   ShopifyProductOperation,
-  ShopifyProductRecommendationsOperation,
-  ShopifyProductsOperation,
-  ShopifyRemoveFromCartOperation,
-  ShopifyUpdateCartOperation
+  ShopifyProductRecommendationsOperation
 } from './types';
 
-const domain = process.env.SHOPIFY_STORE_DOMAIN
-  ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, 'https://')
-  : '';
-const endpoint = `${domain}${SHOPIFY_GRAPHQL_API_ENDPOINT}`;
-const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
+const key = process.env.REFLOW_API_KEY!;
 
-type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never;
-
-export async function shopifyFetch<T>({
-  cache = 'force-cache',
+export async function reflowFetch<T>({
+  cache = 'no-cache',
   headers,
-  query,
-  tags,
-  variables
+  endpoint,
+  method,
+  requestData = {}
 }: {
   cache?: RequestCache;
   headers?: HeadersInit;
-  query: string;
-  tags?: string[];
-  variables?: ExtractVariables<T>;
+  endpoint?: string;
+  method?: 'GET' | 'POST' | 'DELETE';
+  requestData?: object;
 }): Promise<{ status: number; body: T } | never> {
   try {
-    const result = await fetch(endpoint, {
-      method: 'POST',
+    let requestUrl = `${REFLOW_API_URL}/stores/${process.env.REFLOW_STORE_ID}/${endpoint}`;
+
+    if (method == 'GET' && Object.values(requestData).length) {
+      let searchParams = new URLSearchParams({ ...requestData });
+      requestUrl = `${requestUrl}?${searchParams.toString()}`;
+    }
+
+    const result = await fetch(requestUrl, {
+      method,
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': key,
+        // 'X-Shopify-Storefront-Access-Token': key, // TODO REFLOW KEY WHEN NEEDED IF EVER
         ...headers
       },
-      body: JSON.stringify({
-        ...(query && { query }),
-        ...(variables && { variables })
-      }),
-      cache,
-      ...(tags && { next: { tags } })
+      body: method == 'POST' ? JSON.stringify(requestData) : null,
+      cache
     });
 
     const body = await result.json();
 
-    if (body.errors) {
-      throw body.errors[0];
+    if (!result.ok) {
+      let err = new ReflowApiError(body.error || 'HTTP error');
+      err.endpoint = requestUrl;
+      err.status = result.status;
+      err.body = body;
+      throw err;
     }
 
     return {
@@ -98,18 +73,16 @@ export async function shopifyFetch<T>({
       body
     };
   } catch (e) {
-    if (isShopifyError(e)) {
+    if (e instanceof ReflowApiError) {
       throw {
-        cause: e.cause?.toString() || 'unknown',
+        endpoint: e.endpoint,
         status: e.status || 500,
-        message: e.message,
-        query
+        body: e.body
       };
     }
 
     throw {
-      error: e,
-      query
+      error: e
     };
   }
 }
@@ -169,36 +142,6 @@ const reshapeImages = (images: Connection<Image>, productTitle: string) => {
       altText: image.altText || `${productTitle} - ${filename}`
     };
   });
-};
-
-const reshapeProduct = (product: ShopifyProduct, filterHiddenProducts: boolean = true) => {
-  if (!product || (filterHiddenProducts && product.tags.includes(HIDDEN_PRODUCT_TAG))) {
-    return undefined;
-  }
-
-  const { images, variants, ...rest } = product;
-
-  return {
-    ...rest,
-    images: reshapeImages(images, product.title),
-    variants: removeEdgesAndNodes(variants)
-  };
-};
-
-const reshapeProducts = (products: ShopifyProduct[]) => {
-  const reshapedProducts = [];
-
-  for (const product of products) {
-    if (product) {
-      const reshapedProduct = reshapeProduct(product);
-
-      if (reshapedProduct) {
-        reshapedProducts.push(reshapedProduct);
-      }
-    }
-  }
-
-  return reshapedProducts;
 };
 
 export async function createCart(): Promise<Cart> {
@@ -281,31 +224,15 @@ export async function getCollection(handle: string): Promise<Collection | undefi
   return reshapeCollection(res.body.data.collection);
 }
 
-export async function getCollectionProducts({
-  collection,
-  reverse,
-  sortKey
-}: {
-  collection: string;
-  reverse?: boolean;
-  sortKey?: string;
-}): Promise<Product[]> {
-  const res = await shopifyFetch<ShopifyCollectionProductsOperation>({
-    query: getCollectionProductsQuery,
-    tags: [TAGS.collections, TAGS.products],
-    variables: {
-      handle: collection,
-      reverse,
-      sortKey: sortKey === 'CREATED_AT' ? 'CREATED' : sortKey
-    }
+export async function getProducts(requestBody: ReflowProductsRequestBody): Promise<Product[]> {
+  const res = await reflowFetch<ReflowProductsResponse>({
+    method: 'GET',
+    endpoint: 'products/',
+    requestData: requestBody
   });
 
-  if (!res.body.data.collection) {
-    console.log(`No collection found for \`${collection}\``);
-    return [];
-  }
-
-  return reshapeProducts(removeEdgesAndNodes(res.body.data.collection.products));
+  let products = res.body.data;
+  return products;
 }
 
 export async function getCollections(): Promise<Collection[]> {
@@ -336,21 +263,35 @@ export async function getCollections(): Promise<Collection[]> {
   return collections;
 }
 
-export async function getMenu(handle: string): Promise<Menu[]> {
-  const res = await shopifyFetch<ShopifyMenuOperation>({
-    query: getMenuQuery,
-    tags: [TAGS.collections],
-    variables: {
-      handle
-    }
+export async function getCategoriesMenu(): Promise<Menu[]> {
+  const menuCategories = process.env.MENU_CATEGORIES?.split(',') || [];
+  const productsPath = '/products/';
+
+  let reflowCategories = await reflowFetch<ReflowCategoriesResponse>({
+    method: 'GET',
+    endpoint: 'categories/'
   });
 
-  return (
-    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
-      title: item.title,
-      path: item.url.replace(domain, '').replace('/collections', '/search').replace('/pages', '')
-    })) || []
-  );
+  let menuItems = [
+    {
+      title: 'All Products',
+      path: productsPath
+    }
+  ];
+
+  for (const menuCategory of menuCategories) {
+    let category = reflowCategories.body.find((cat) => cat.id == menuCategory);
+    if (!category) {
+      console.error(`Cannot find menu category with reflow id ${menuCategory}`);
+      continue;
+    }
+    menuItems.push({
+      title: category.name,
+      path: `${productsPath}/category/${category.id}`
+    });
+  }
+
+  return menuItems;
 }
 
 export async function getPage(handle: string): Promise<Page> {
@@ -392,28 +333,6 @@ export async function getProductRecommendations(productId: string): Promise<Prod
   });
 
   return reshapeProducts(res.body.data.productRecommendations);
-}
-
-export async function getProducts({
-  query,
-  reverse,
-  sortKey
-}: {
-  query?: string;
-  reverse?: boolean;
-  sortKey?: string;
-}): Promise<Product[]> {
-  const res = await shopifyFetch<ShopifyProductsOperation>({
-    query: getProductsQuery,
-    tags: [TAGS.products],
-    variables: {
-      query,
-      reverse,
-      sortKey
-    }
-  });
-
-  return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
 }
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.

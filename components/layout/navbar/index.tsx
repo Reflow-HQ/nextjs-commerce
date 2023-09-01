@@ -1,7 +1,7 @@
 import Cart from 'components/cart';
 import OpenCart from 'components/cart/open-cart';
 import LogoSquare from 'components/logo-square';
-import { getMenu } from 'lib/reflow';
+import { getCategoriesMenu } from 'lib/reflow';
 import { Menu } from 'lib/reflow/types';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -10,7 +10,7 @@ import Search from './search';
 const { SITE_NAME } = process.env;
 
 export default async function Navbar() {
-  const menu = await getMenu('next-js-frontend-header-menu');
+  const menu = await getCategoriesMenu();
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">

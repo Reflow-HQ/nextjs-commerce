@@ -8,6 +8,74 @@ export type Edge<T> = {
   node: T;
 };
 
+export type NonEmptyArray<Type> = [Type, ...Array<Type>];
+
+export type Category = {
+  object: 'category';
+  id: string;
+  name: string;
+  subcategories: object[];
+};
+
+export type Currency = {
+  code: string;
+  name: string;
+  zero_decimal: boolean;
+};
+
+export type Product = {
+  object: 'product';
+  id: string;
+  name: string;
+  handle?: string;
+  excerpt?: string;
+  description?: string;
+  description_html?: string;
+  promo_badge?: string;
+  currency: Currency;
+  price: number;
+  price_formatted: string;
+  price_range: NonEmptyArray<number>;
+  price_range_formatted: string;
+  image: object;
+  media: object[];
+  variants: object;
+  categories: Category[];
+  inventory_type: string;
+  in_stock: boolean;
+  available_quantity?: number;
+  personalization: object;
+  min_quantity?: number;
+  max_quantity?: number;
+  on_sale: object;
+  sku?: string;
+  livemode: boolean;
+};
+
+export type ReflowProductsRequestBody = {
+  page?: number;
+  perpage?: number;
+  category?: string;
+  search?: string;
+  order?:
+    | 'name_asc'
+    | 'name_desc'
+    | 'price_asc'
+    | 'price_desc'
+    | 'date_asc'
+    | 'date_desc'
+    | 'custom_asc'
+    | 'custom_desc';
+};
+
+export type ReflowProductsResponse = {
+  data: Product[];
+  links: object; // Pagination links
+  meta: object; // Pagination metadata
+};
+
+export type ReflowCategoriesResponse = Category[];
+
 export type Cart = Omit<ShopifyCart, 'lines'> & {
   lines: CartItem[];
 };
@@ -33,13 +101,6 @@ export type Collection = ShopifyCollection & {
   path: string;
 };
 
-export type Image = {
-  url: string;
-  altText: string;
-  width: number;
-  height: number;
-};
-
 export type Menu = {
   title: string;
   path: string;
@@ -59,11 +120,6 @@ export type Page = {
   seo?: SEO;
   createdAt: string;
   updatedAt: string;
-};
-
-export type Product = Omit<ShopifyProduct, 'variants' | 'images'> & {
-  variants: ProductVariant[];
-  images: Image[];
 };
 
 export type ProductOption = {
@@ -193,36 +249,9 @@ export type ShopifyCollectionOperation = {
   };
 };
 
-export type ShopifyCollectionProductsOperation = {
-  data: {
-    collection: {
-      products: Connection<ShopifyProduct>;
-    };
-  };
-  variables: {
-    handle: string;
-    reverse?: boolean;
-    sortKey?: string;
-  };
-};
-
 export type ShopifyCollectionsOperation = {
   data: {
     collections: Connection<ShopifyCollection>;
-  };
-};
-
-export type ShopifyMenuOperation = {
-  data: {
-    menu?: {
-      items: {
-        title: string;
-        url: string;
-      }[];
-    };
-  };
-  variables: {
-    handle: string;
   };
 };
 

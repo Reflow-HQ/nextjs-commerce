@@ -1,15 +1,16 @@
 import clsx from 'clsx';
 import Price from './price';
+import { Currency } from 'lib/reflow/types';
 
 const Label = ({
   title,
   amount,
-  currencyCode,
+  currency,
   position = 'bottom'
 }: {
   title: string;
-  amount: string;
-  currencyCode: string;
+  amount: number;
+  currency: Currency;
   position?: 'bottom' | 'center';
 }) => {
   return (
@@ -23,7 +24,7 @@ const Label = ({
         <Price
           className="flex-none rounded-full bg-blue-600 p-2 text-white"
           amount={amount}
-          currencyCode={currencyCode}
+          currency={currency}
           currencyCodeClassName="hidden @[275px]/label:inline"
         />
       </div>

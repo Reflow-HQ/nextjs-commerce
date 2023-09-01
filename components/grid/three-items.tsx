@@ -1,5 +1,5 @@
 import { GridTileImage } from 'components/grid/tile';
-import { getCollectionProducts } from 'lib/reflow';
+import { getProducts } from 'lib/reflow';
 import type { Product } from 'lib/reflow/types';
 import Link from 'next/link';
 
@@ -18,18 +18,18 @@ function ThreeItemGridItem({
     >
       <Link className="relative block aspect-square h-full w-full" href={`/product/${item.handle}`}>
         <GridTileImage
-          src={item.featuredImage.url}
+          src={item.image.lg}
           fill
           sizes={
             size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
           }
           priority={priority}
-          alt={item.title}
+          alt={item.name}
           label={{
             position: size === 'full' ? 'center' : 'bottom',
-            title: item.title as string,
-            amount: item.priceRange.maxVariantPrice.amount,
-            currencyCode: item.priceRange.maxVariantPrice.currencyCode
+            title: item.name as string,
+            amount: item.price_range.sort()[0],
+            currency: item.currency
           }}
         />
       </Link>
@@ -38,9 +38,13 @@ function ThreeItemGridItem({
 }
 
 export async function ThreeItemGrid() {
-  // Collections that start with `hidden-*` are hidden from the search page.
-  const homepageItems = await getCollectionProducts({
-    collection: 'hidden-homepage-featured-items'
+  // TODO: hidden search items
+
+  const homepageItems = await getProducts({
+    category: process.env.FEATURED_PRODUCTS_CATEGORY,
+    page: 1,
+    perpage: 3,
+    order: 'custom_desc'
   });
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;

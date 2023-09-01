@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Label from '../label';
+import { Currency } from 'lib/reflow/types';
 
 export function GridTileImage({
   isInteractive = true,
@@ -12,8 +13,8 @@ export function GridTileImage({
   active?: boolean;
   label?: {
     title: string;
-    amount: string;
-    currencyCode: string;
+    amount: number;
+    currency: Currency;
     position?: 'bottom' | 'center';
   };
 } & React.ComponentProps<typeof Image>) {
@@ -41,7 +42,7 @@ export function GridTileImage({
         <Label
           title={label.title}
           amount={label.amount}
-          currencyCode={label.currencyCode}
+          currency={label.currency}
           position={label.position}
         />
       ) : null}

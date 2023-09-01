@@ -12,8 +12,8 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.shopify.com',
-        pathname: '/s/files/**'
+        hostname: 'cdn.reflowhq.com',
+        pathname: '/media/**'
       }
     ]
   },
