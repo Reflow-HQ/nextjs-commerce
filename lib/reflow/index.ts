@@ -1,27 +1,21 @@
-import { HIDDEN_PRODUCT_TAG, REFLOW_API_URL, TAGS } from 'lib/constants';
+import { REFLOW_API_URL, TAGS } from 'lib/constants';
 import { ReflowApiError } from 'lib/type-guards';
 import { revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   Cart,
+  Category,
   Collection,
   Connection,
   Image,
   Menu,
-  Page,
   Product,
-  ReflowCategoriesResponse,
+  ReflowPaginatedProductsResponse,
   ReflowProductsRequestBody,
-  ReflowProductsResponse,
   ShopifyCart,
   ShopifyCollection,
-  ShopifyCollectionsOperation,
-  ShopifyPageOperation,
-  ShopifyPagesOperation,
-  ShopifyProduct,
-  ShopifyProductOperation,
-  ShopifyProductRecommendationsOperation
+  ShopifyCollectionsOperation
 } from './types';
 
 const key = process.env.REFLOW_API_KEY!;
@@ -225,7 +219,7 @@ export async function getCollection(handle: string): Promise<Collection | undefi
 }
 
 export async function getProducts(requestBody: ReflowProductsRequestBody): Promise<Product[]> {
-  const res = await reflowFetch<ReflowProductsResponse>({
+  const res = await reflowFetch<ReflowPaginatedProductsResponse>({
     method: 'GET',
     endpoint: 'products/',
     requestData: requestBody
@@ -267,7 +261,7 @@ export async function getCategoriesMenu(): Promise<Menu[]> {
   const menuCategories = process.env.MENU_CATEGORIES?.split(',') || [];
   const productsPath = '/products/';
 
-  let reflowCategories = await reflowFetch<ReflowCategoriesResponse>({
+  let reflowCategories = await reflowFetch<Category[]>({
     method: 'GET',
     endpoint: 'categories/'
   });
@@ -294,45 +288,14 @@ export async function getCategoriesMenu(): Promise<Menu[]> {
   return menuItems;
 }
 
-export async function getPage(handle: string): Promise<Page> {
-  const res = await shopifyFetch<ShopifyPageOperation>({
-    query: getPageQuery,
-    variables: { handle }
-  });
-
-  return res.body.data.pageByHandle;
-}
-
-export async function getPages(): Promise<Page[]> {
-  const res = await shopifyFetch<ShopifyPagesOperation>({
-    query: getPagesQuery
-  });
-
-  return removeEdgesAndNodes(res.body.data.pages);
-}
-
 export async function getProduct(handle: string): Promise<Product | undefined> {
-  const res = await shopifyFetch<ShopifyProductOperation>({
-    query: getProductQuery,
-    tags: [TAGS.products],
-    variables: {
-      handle
-    }
+  const res = await reflowFetch<Product>({
+    method: 'GET',
+    endpoint: 'products/' + handle
   });
 
-  return reshapeProduct(res.body.data.product, false);
-}
-
-export async function getProductRecommendations(productId: string): Promise<Product[]> {
-  const res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
-    query: getProductRecommendationsQuery,
-    tags: [TAGS.products],
-    variables: {
-      productId
-    }
-  });
-
-  return reshapeProducts(res.body.data.productRecommendations);
+  let product = res.body;
+  return product;
 }
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.

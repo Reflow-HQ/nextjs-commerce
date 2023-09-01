@@ -2,14 +2,11 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { GridTileImage } from 'components/grid/tile';
 import Footer from 'components/layout/footer';
 import { Gallery } from 'components/product/gallery';
 import { ProductDescription } from 'components/product/product-description';
-import { HIDDEN_PRODUCT_TAG } from 'lib/constants';
-import { getProduct, getProductRecommendations } from 'lib/reflow';
-import { Image } from 'lib/reflow/types';
-import Link from 'next/link';
+import { getProduct } from 'lib/reflow';
+import { Media } from 'lib/reflow/types';
 
 export const runtime = 'edge';
 
@@ -22,12 +19,13 @@ export async function generateMetadata({
 
   if (!product) return notFound();
 
-  const { url, width, height, altText: alt } = product.featuredImage || {};
-  const indexable = !product.tags.includes(HIDDEN_PRODUCT_TAG);
+  const imageURL = product.image.lg;
+  const imageAlt = product.name;
+  const indexable = true;
 
   return {
-    title: product.seo.title || product.title,
-    description: product.seo.description || product.description,
+    title: product.name,
+    description: product.description,
     robots: {
       index: indexable,
       follow: indexable,
@@ -36,14 +34,12 @@ export async function generateMetadata({
         follow: indexable
       }
     },
-    openGraph: url
+    openGraph: imageURL
       ? {
           images: [
             {
-              url,
-              width,
-              height,
-              alt
+              url: imageURL,
+              alt: imageAlt
             }
           ]
         }
@@ -56,20 +52,24 @@ export default async function ProductPage({ params }: { params: { handle: string
 
   if (!product) return notFound();
 
+  let priceRange = product.price_range.sort();
+  let priceRangeLow = priceRange[0];
+  let priceRangeHigh = priceRange.at(-1);
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.title,
+    name: product.name,
     description: product.description,
-    image: product.featuredImage.url,
+    image: product.image.lg,
     offers: {
       '@type': 'AggregateOffer',
-      availability: product.availableForSale
+      availability: product.in_stock
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-      highPrice: product.priceRange.maxVariantPrice.amount,
-      lowPrice: product.priceRange.minVariantPrice.amount
+      priceCurrency: product.currency.code,
+      highPrice: product.currency.zero_decimal ? priceRangeHigh : priceRangeHigh / 100,
+      lowPrice: product.currency.zero_decimal ? priceRangeLow : priceRangeLow / 100
     }
   };
 
@@ -85,10 +85,15 @@ export default async function ProductPage({ params }: { params: { handle: string
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 dark:border-neutral-800 dark:bg-black md:p-12 lg:flex-row lg:gap-8">
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Gallery
-              images={product.images.map((image: Image) => ({
-                src: image.url,
-                altText: image.altText
-              }))}
+              // TODO video
+              images={product.media
+                .filter((m: Media) => m.type == 'image')
+                .map((m: Media) => {
+                  return {
+                    src: m.src.lg,
+                    altText: product.name
+                  };
+                })}
             />
           </div>
 
@@ -96,47 +101,10 @@ export default async function ProductPage({ params }: { params: { handle: string
             <ProductDescription product={product} />
           </div>
         </div>
-        <Suspense>
-          <RelatedProducts id={product.id} />
-        </Suspense>
       </div>
       <Suspense>
         <Footer />
       </Suspense>
     </>
-  );
-}
-
-async function RelatedProducts({ id }: { id: string }) {
-  const relatedProducts = await getProductRecommendations(id);
-
-  if (!relatedProducts.length) return null;
-
-  return (
-    <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
-      <ul className="flex w-full gap-4 overflow-x-auto pt-1">
-        {relatedProducts.map((product) => (
-          <li
-            key={product.handle}
-            className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
-          >
-            <Link className="relative h-full w-full" href={`/product/${product.handle}`}>
-              <GridTileImage
-                alt={product.title}
-                label={{
-                  title: product.title,
-                  amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode
-                }}
-                src={product.featuredImage?.url}
-                fill
-                sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-              />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

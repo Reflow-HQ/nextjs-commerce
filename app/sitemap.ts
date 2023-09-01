@@ -1,4 +1,4 @@
-import { getCollections, getPages, getProducts } from 'lib/reflow';
+import { getCollections, getProducts } from 'lib/reflow';
 import { MetadataRoute } from 'next';
 
 type Route = {
@@ -27,13 +27,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     products.map((product) => ({
       url: `${baseUrl}/product/${product.handle}`,
       lastModified: product.updatedAt
-    }))
-  );
-
-  const pagesPromise = getPages().then((pages) =>
-    pages.map((page) => ({
-      url: `${baseUrl}/${page.handle}`,
-      lastModified: page.updatedAt
     }))
   );
 
