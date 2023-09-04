@@ -1,13 +1,5 @@
 export type Maybe<T> = T | null;
 
-export type Connection<T> = {
-  edges: Array<Edge<T>>;
-};
-
-export type Edge<T> = {
-  node: T;
-};
-
 export type NonEmptyArray<Type> = [Type, ...Array<Type>];
 
 export type Currency = {
@@ -24,15 +16,15 @@ export type ImageSources = {
 
 export type Media =
   | {
-      id: string;
-      type: 'image';
-      src: ImageSources;
-    }
+    id: string;
+    type: 'image';
+    src: ImageSources;
+  }
   | {
-      id: string;
-      type: 'video';
-      url: string;
-    };
+    id: string;
+    type: 'video';
+    url: string;
+  };
 
 export type ReflowCategory = {
   object: 'category';
@@ -86,14 +78,14 @@ export type ReflowProductsRequestBody = {
   category?: string;
   search?: string;
   order?:
-    | 'name_asc'
-    | 'name_desc'
-    | 'price_asc'
-    | 'price_desc'
-    | 'date_asc'
-    | 'date_desc'
-    | 'custom_asc'
-    | 'custom_desc';
+  | 'name_asc'
+  | 'name_desc'
+  | 'price_asc'
+  | 'price_desc'
+  | 'date_asc'
+  | 'date_desc'
+  | 'custom_asc'
+  | 'custom_desc';
 };
 
 export type ReflowPaginatedProductsResponse = {
@@ -103,10 +95,6 @@ export type ReflowPaginatedProductsResponse = {
 };
 
 // _------------------------------------
-
-export type Cart = Omit<ShopifyCart, 'lines'> & {
-  lines: CartItem[];
-};
 
 export type CartItem = {
   id: string;
@@ -165,7 +153,6 @@ export type ShopifyCart = {
     totalAmount: Money;
     totalTaxAmount: Money;
   };
-  lines: Connection<CartItem>;
   totalQuantity: number;
 };
 

@@ -1,8 +1,20 @@
+'use client'
+
 import Price from 'components/price';
 import Prose from 'components/prose';
 import { ReflowProduct } from 'lib/reflow/types';
 
+// import { AddToCart, useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified code
+// import "@reflowhq/cart-react/src/cartview.css"; // TODO: this don't work
+
 export function ProductDescription({ product }: { product: ReflowProduct }) {
+
+  const config = {
+    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+  };
+
+  const cart = useCart(config);
+
   return (
     <>
       <div className="mb-6 flex flex-col border-b pb-6 dark:border-neutral-700">
@@ -20,7 +32,14 @@ export function ProductDescription({ product }: { product: ReflowProduct }) {
         />
       ) : null}
 
-      {/* <AddToCart variants={product.variants} availableForSale={product.availableForSale} /> */}
+      <AddToCart
+        key={product.id}
+        cart={cart}
+        product={product}
+        onMessage={(message: any) => {
+          alert(message.title);
+        }}
+      />
     </>
   );
 }

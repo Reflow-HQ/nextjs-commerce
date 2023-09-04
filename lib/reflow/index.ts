@@ -5,7 +5,6 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   Cart,
-  Connection,
   Menu,
   ReflowCategory,
   ReflowPaginatedProductsResponse,
@@ -31,7 +30,7 @@ export async function reflowFetch<T>({
   requestData?: object;
 }): Promise<{ status: number; body: T } | never> {
   try {
-    let requestUrl = `${REFLOW_API_URL}/stores/${process.env.REFLOW_STORE_ID}/${endpoint}`;
+    let requestUrl = `${REFLOW_API_URL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
 
     if (method == 'GET' && Object.values(requestData).length) {
       let searchParams = new URLSearchParams({ ...requestData });
@@ -78,11 +77,7 @@ export async function reflowFetch<T>({
   }
 }
 
-const removeEdgesAndNodes = (array: Connection<any>) => {
-  return array.edges.map((edge) => edge?.node);
-};
-
-const reshapeCart = (cart: ShopifyCart): Cart => {
+const reshapeCart = (cart: ShopifyCart): ShopifyCart => {
   if (!cart.cost?.totalTaxAmount) {
     cart.cost.totalTaxAmount = {
       amount: '0.0',
@@ -90,10 +85,7 @@ const reshapeCart = (cart: ShopifyCart): Cart => {
     };
   }
 
-  return {
-    ...cart,
-    lines: removeEdgesAndNodes(cart.lines)
-  };
+  return cart;
 };
 
 export async function createCart(): Promise<Cart> {
@@ -164,16 +156,8 @@ export async function getCart(cartId: string): Promise<Cart | undefined> {
   return reshapeCart(res.body.data.cart);
 }
 
-export async function getCollection(handle: string): Promise<Collection | undefined> {
-  const res = await shopifyFetch<ShopifyCollectionOperation>({
-    query: getCollectionQuery,
-    tags: [TAGS.collections],
-    variables: {
-      handle
-    }
-  });
-
-  return reshapeCollection(res.body.data.collection);
+export async function getCategory(handle: string): Promise<Category | undefined> {
+  // TODO
 }
 
 export async function getProducts(
@@ -187,6 +171,16 @@ export async function getProducts(
 
   let products = res.body.data;
   return products;
+}
+
+export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {
+  const res = await reflowFetch<ReflowProduct>({
+    method: 'GET',
+    endpoint: 'products/' + handle
+  });
+
+  let product = res.body;
+  return product;
 }
 
 export async function getCategories(): Promise<SearchCategory[]> {
@@ -249,15 +243,8 @@ export async function getNavigationMenu(): Promise<Menu[]> {
   return menuItems;
 }
 
-export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {
-  const res = await reflowFetch<ReflowProduct>({
-    method: 'GET',
-    endpoint: 'products/' + handle
-  });
 
-  let product = res.body;
-  return product;
-}
+// TODO: this
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.
 export async function revalidate(req: NextRequest): Promise<NextResponse> {
