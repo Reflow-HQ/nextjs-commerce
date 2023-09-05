@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import Footer from 'components/layout/footer';
 import { Gallery } from 'components/product/gallery';
-import { ProductDescription } from 'components/product/product-description';
+import { ProductDescriptionDynamic } from 'components/product/product-description-dynamic';
 import { getProduct } from 'lib/reflow';
 import { Media } from 'lib/reflow/types';
 
@@ -36,13 +36,13 @@ export async function generateMetadata({
     },
     openGraph: imageURL
       ? {
-          images: [
-            {
-              url: imageURL,
-              alt: imageAlt
-            }
-          ]
-        }
+        images: [
+          {
+            url: imageURL,
+            alt: imageAlt
+          }
+        ]
+      }
       : null
   };
 }
@@ -107,7 +107,7 @@ export default async function ProductPage({ params }: { params: { handle: string
           </div>
 
           <div className="basis-full lg:basis-2/6">
-            <ProductDescription product={product} />
+            <ProductDescriptionDynamic product={product} />
           </div>
         </div>
       </div>

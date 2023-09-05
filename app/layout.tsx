@@ -1,8 +1,10 @@
+// import "@reflowhq/cart-react/src/cartview.css"; TODO: can't for the life of me make this work, copied styles to reflow.css ¯\_(ツ)_/¯
 import Navbar from 'components/layout/navbar';
 import { ensureStartsWith } from 'lib/utils';
 import { Inter } from 'next/font/google';
 import { ReactNode, Suspense } from 'react';
 import './globals.css';
+import './reflow.css';
 
 const { TWITTER_CREATOR, TWITTER_SITE, SITE_NAME } = process.env;
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -23,12 +25,12 @@ export const metadata = {
   },
   ...(twitterCreator &&
     twitterSite && {
-      twitter: {
-        card: 'summary_large_image',
-        creator: twitterCreator,
-        site: twitterSite
-      }
-    })
+    twitter: {
+      card: 'summary_large_image',
+      creator: twitterCreator,
+      site: twitterSite
+    }
+  })
 };
 
 const inter = Inter({

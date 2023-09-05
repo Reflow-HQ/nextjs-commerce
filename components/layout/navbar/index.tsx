@@ -1,11 +1,9 @@
-import Cart from 'components/cart';
-import OpenCart from 'components/cart/open-cart';
 import LogoSquare from 'components/logo-square';
 import { getNavigationMenu } from 'lib/reflow';
 import { Menu } from 'lib/reflow/types';
 import Link from 'next/link';
-import { Suspense } from 'react';
 import MobileMenu from './mobile-menu';
+import { OpenCartDynamic } from './open-cart-dynamic';
 import Search from './search';
 const { SITE_NAME } = process.env;
 
@@ -44,9 +42,8 @@ export default async function Navbar() {
           <Search />
         </div>
         <div className="flex justify-end md:w-1/3">
-          <Suspense fallback={<OpenCart />}>
-            <Cart />
-          </Suspense>
+          {/* TODO: navbar was removed here, check original repo. We can add it back but it will be more work */}
+          <OpenCartDynamic />
         </div>
       </div>
     </nav>

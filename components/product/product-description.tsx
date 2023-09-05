@@ -4,11 +4,11 @@ import Price from 'components/price';
 import Prose from 'components/prose';
 import { ReflowProduct } from 'lib/reflow/types';
 
-// import { AddToCart, useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified code
-// import "@reflowhq/cart-react/src/cartview.css"; // TODO: this don't work
+import { AddToCart, useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified code
 
 export function ProductDescription({ product }: { product: ReflowProduct }) {
 
+  // TODO: centralize this config somehwere global?
   const config = {
     storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
   };
@@ -23,7 +23,6 @@ export function ProductDescription({ product }: { product: ReflowProduct }) {
           <Price amount={product.price_range.sort()[0]} currency={product.currency} />
         </div>
       </div>
-      {/* <VariantSelector options={product.options} variants={product.variants} /> */}
 
       {product.description_html ? (
         <Prose
@@ -32,12 +31,14 @@ export function ProductDescription({ product }: { product: ReflowProduct }) {
         />
       ) : null}
 
+      {/* TODO: change shown price on variant select */}
+
       <AddToCart
         key={product.id}
         cart={cart}
         product={product}
         onMessage={(message: any) => {
-          alert(message.title);
+          alert(cart.total); // TODO: if we add cart side bar this should open it, if we dont maybe show a toast?
         }}
       />
     </>

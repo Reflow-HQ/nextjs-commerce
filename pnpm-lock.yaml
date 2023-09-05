@@ -11,6 +11,9 @@ dependencies:
   '@heroicons/react':
     specifier: ^2.0.18
     version: 2.0.18(react@18.2.0)
+  '@reflowhq/auth-react':
+    specifier: ^2.0.3
+    version: 2.0.3(react-dom@18.2.0)(react@18.2.0)
   '@reflowhq/cart-react':
     specifier: ^2.0.4
     version: 2.0.4(react-dom@18.2.0)(react@18.2.0)
@@ -373,6 +376,21 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@reflowhq/auth-react@2.0.3(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-ukgXUz5IZ1RTQsVhjOS9E60KMkH6VBchLafFR4E0bRc9RzPm4y0mVYmUzDAa0LjGkFcOB3yVhwju5AX0E8j+tA==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@reflowhq/auth': 2.0.3
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@reflowhq/auth@2.0.3:
+    resolution: {integrity: sha512-3Whuixd1r41QZE9pDmI+4ktVCboZIFnSVYQq615WUZlCZKseKLa5TuS+hvTLyI2qk9UpqDX3jJyccpsjpeU/Ow==}
+    dev: false
 
   /@reflowhq/cart-react@2.0.4(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-tvnOpuAwkse4/nHqUmh/OAIzZ69zMquPujpVg2Cc3xymGX23A83LVkvwn1qHQ7esoyu8QO4toAY+0zUGMHksWg==}
