@@ -1,4 +1,5 @@
 'use client'
+// TODO: only addtocart should be 'use client' here
 
 import Price from 'components/price';
 import Prose from 'components/prose';

@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-/** TODO: research this and avoid nextjs image optimization, use cloudflare CDN instead */
 
 module.exports = {
   eslint: {
@@ -10,22 +9,14 @@ module.exports = {
     serverActions: true
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.reflowhq.com',
-        pathname: '/media/**'
-      }
-    ]
+    // Images are loaded from CDN, no need for further nextjs optimization 
+    unoptimized: true,
   },
   async redirects() {
-    return [
-      {
-        source: '/password',
-        destination: '/',
-        permanent: true
-      }
-    ];
+    return [{
+      source: '/password',
+      destination: '/',
+      permanent: true
+    }];
   }
 };

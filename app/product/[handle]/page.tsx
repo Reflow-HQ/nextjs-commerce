@@ -73,19 +73,21 @@ export default async function ProductPage({ params }: { params: { handle: string
     }
   };
 
-  let galleryImages: { src: string; altText: string }[] = [
+  let galleryMedia: { type: 'image' | 'video'; src: string; altText: string }[] = [
     {
+      type: 'image',
       src: product.image.lg,
       altText: product.name
     }
   ];
-  let mediaImages = product.media.filter((m: Media) => m.type == 'image');
-  if (mediaImages.length) {
-    galleryImages = mediaImages.map((m: Media) => {
+  if (product.media.length) {
+    galleryMedia = product.media.map((m: Media) => {
+
       return {
-        src: m.src.lg,
-        altText: product.name
-      };
+        type: m.type,
+        altText: product.name,
+        src: m.type == 'image' ? m.src.lg : m.url
+      }
     });
   }
 
@@ -101,8 +103,7 @@ export default async function ProductPage({ params }: { params: { handle: string
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 dark:border-neutral-800 dark:bg-black md:p-12 lg:flex-row lg:gap-8">
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Gallery
-              // TODO video
-              images={galleryImages}
+              media={galleryMedia}
             />
           </div>
 
