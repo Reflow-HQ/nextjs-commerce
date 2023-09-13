@@ -11,22 +11,20 @@ export function OpenCart({
   className?: string;
 }) {
 
-  const config = {
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
-  };
+  const cart = useCart({
+    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID
+  });
 
-  const cart = useCart(config);
-  const quantityRef = useRef(cart.products.length || 0); // TODO: there was a better way to get this afair
+  if (!cart.isLoaded) {
+    cart.refresh();
+  }
+
+  const quantityRef = useRef(cart.quantity); // TODO: this isn't documented in reflow-libs, seems useful
   const [quantity, setQuantity] = useState(0);
-
-  // TODO: this is 0 on page load, even if stuff in cart
-  // gets the actual value only on adding product or going to /cart
-  // figure out why
-  console.log(cart.products.length); 
 
   useEffect(() => {
 
-    let newQ = cart.products.length || 0;
+    let newQ = cart.quantity || 0;
     let oldQ = quantityRef.current;
 
     if (newQ != oldQ) {

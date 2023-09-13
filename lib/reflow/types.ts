@@ -59,7 +59,11 @@ export type ReflowProduct = {
   price_range_formatted: string;
   image: ImageSources;
   media: Media[];
-  variants: object;
+  variants: {
+    enabled: boolean,
+    option_name: string,
+    items: object[]
+  };
   categories: ReflowCategory[];
   inventory_type: string;
   in_stock: boolean;

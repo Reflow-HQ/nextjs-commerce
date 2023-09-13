@@ -17,9 +17,8 @@ export const sorting: SortFilterItem[] = [
   { title: 'Price: High to low', slug: 'price-desc', orderKey: 'price_desc' }
 ];
 
-// TODO: what are tags?
 export const TAGS = {
-  collections: 'collections',
+  categories: 'categories',
   products: 'products'
 };
 

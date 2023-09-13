@@ -164,13 +164,13 @@ export async function getNavigationMenu(): Promise<Menu[]> {
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.
 export async function revalidate(req: NextRequest): Promise<NextResponse> {
-  // We always need to respond with a 200 status code to Shopify,
+  // We always need to respond with a 200 status code to Reflow,
   // otherwise it will continue to retry the request.
-  const collectionWebhooks = ['collections/create', 'collections/delete', 'collections/update'];
+  const categoryWebhooks = ['categories/create', 'categories/delete', 'categories/update'];
   const productWebhooks = ['products/create', 'products/delete', 'products/update'];
   const topic = headers().get('x-shopify-topic') || 'unknown';
   const secret = req.nextUrl.searchParams.get('secret');
-  const isCollectionUpdate = collectionWebhooks.includes(topic);
+  const isCategoriesUpdate = categoryWebhooks.includes(topic);
   const isProductUpdate = productWebhooks.includes(topic);
 
   if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
@@ -178,13 +178,13 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ status: 200 });
   }
 
-  if (!isCollectionUpdate && !isProductUpdate) {
+  if (!isCategoriesUpdate && !isProductUpdate) {
     // We don't need to revalidate anything for any other topics.
     return NextResponse.json({ status: 200 });
   }
 
-  if (isCollectionUpdate) {
-    revalidateTag(TAGS.collections);
+  if (isCategoriesUpdate) {
+    revalidateTag(TAGS.categories);
   }
 
   if (isProductUpdate) {

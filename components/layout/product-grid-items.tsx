@@ -19,7 +19,7 @@ export default function ProductGridItems({ products }: { products: ReflowProduct
                 amount: product.price_range.sort()[0],
                 currency: product.currency
               }}
-              src={product.image.lg}
+              src={product.image.md}
               fill
               sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
             />

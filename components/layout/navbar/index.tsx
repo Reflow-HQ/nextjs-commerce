@@ -42,7 +42,6 @@ export default async function Navbar() {
           <Search />
         </div>
         <div className="flex justify-end md:w-1/3">
-          {/* TODO: navbar was removed here, check original repo. We can add it back but it will be more work */}
           <OpenCartDynamic />
         </div>
       </div>
