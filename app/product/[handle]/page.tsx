@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: { params: { handle: string
 
   let priceRange = product.price_range.sort();
   let priceRangeLow = priceRange[0];
-  let priceRangeHigh = priceRange.at(-1);
+  let priceRangeHigh = priceRange.at(-1) || priceRangeLow;
 
   const productJsonLd = {
     '@context': 'https://schema.org',

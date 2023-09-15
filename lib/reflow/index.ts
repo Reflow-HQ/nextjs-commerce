@@ -16,12 +16,14 @@ export async function reflowFetch<T>({
   headers,
   endpoint,
   method,
-  requestData = {}
+  requestData = {},
+  tags
 }: {
   headers?: HeadersInit;
   endpoint?: string;
   method?: 'GET' | 'POST' | 'DELETE';
   requestData?: object;
+  tags?: string[];
 }): Promise<{ status: number; body: T } | never> {
   try {
     let requestUrl = `${REFLOW_API_URL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
@@ -38,6 +40,7 @@ export async function reflowFetch<T>({
         ...headers
       },
       body: method == 'POST' ? JSON.stringify(requestData) : null,
+      ...(tags && { next: { tags } })
     });
 
     const body = await result.json();
@@ -72,7 +75,8 @@ export async function reflowFetch<T>({
 export async function getCategory(handle: string): Promise<ReflowCategory | undefined> {
   const res = await reflowFetch<ReflowCategory>({
     method: 'GET',
-    endpoint: 'categories/' + handle
+    endpoint: 'categories/' + handle,
+    tags: [TAGS.categories],
   });
 
   let category = res.body;
@@ -82,10 +86,15 @@ export async function getCategory(handle: string): Promise<ReflowCategory | unde
 export async function getProducts(
   requestBody: ReflowProductsRequestBody
 ): Promise<ReflowProduct[]> {
+
+  let tags = [TAGS.products];
+  if (requestBody.category) tags.push(TAGS.categories);
+
   const res = await reflowFetch<ReflowPaginatedProductsResponse>({
     method: 'GET',
     endpoint: 'products/',
-    requestData: requestBody
+    requestData: requestBody,
+    tags
   });
 
   let products = res.body.data;
@@ -95,7 +104,8 @@ export async function getProducts(
 export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {
   const res = await reflowFetch<ReflowProduct>({
     method: 'GET',
-    endpoint: 'products/' + handle
+    endpoint: 'products/' + handle,
+    tags: [TAGS.products],
   });
 
   let product = res.body;
@@ -105,7 +115,8 @@ export async function getProduct(handle: string): Promise<ReflowProduct | undefi
 export async function getSearchCategories(): Promise<SearchCategory[]> {
   let reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
-    endpoint: 'categories/'
+    endpoint: 'categories/',
+    tags: [TAGS.categories],
   });
   const categories = [
     {
@@ -131,7 +142,8 @@ export async function getNavigationMenu(): Promise<Menu[]> {
 
   let reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
-    endpoint: 'categories/'
+    endpoint: 'categories/',
+    tags: [TAGS.categories],
   });
 
   let menuItems = [
