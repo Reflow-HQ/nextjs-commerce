@@ -1,7 +1,5 @@
-import { getCategories, getProducts } from 'lib/reflow';
+import { getProducts, getSearchCategories } from 'lib/reflow';
 import { MetadataRoute } from 'next';
-
-// TODO: this file
 
 type Route = {
   url: string;
@@ -18,17 +16,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date().toISOString()
   }));
 
-  const categoriesPromise = getCategories().then((categories) =>
+  const categoriesPromise = getSearchCategories().then((categories) =>
     categories.map((category) => ({
-      url: `${baseUrl}${category.path}`,
-      lastModified: category.updatedAt
+      url: `${baseUrl}/search/${category.handle}`,
+      lastModified: new Date().toISOString()
     }))
   );
 
   const productsPromise = getProducts({}).then((products) =>
     products.map((product) => ({
       url: `${baseUrl}/product/${product.handle}`,
-      lastModified: product.updatedAt // TODO
+      lastModified: new Date().toISOString()
     }))
   );
 

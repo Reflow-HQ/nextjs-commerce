@@ -13,13 +13,11 @@ import {
 } from './types';
 
 export async function reflowFetch<T>({
-  cache = 'no-cache',
   headers,
   endpoint,
   method,
   requestData = {}
 }: {
-  cache?: RequestCache;
   headers?: HeadersInit;
   endpoint?: string;
   method?: 'GET' | 'POST' | 'DELETE';
@@ -40,7 +38,6 @@ export async function reflowFetch<T>({
         ...headers
       },
       body: method == 'POST' ? JSON.stringify(requestData) : null,
-      cache
     });
 
     const body = await result.json();
@@ -72,8 +69,14 @@ export async function reflowFetch<T>({
   }
 }
 
-export async function getCategory(handle: string): Promise<Category | undefined> {
-  // TODO
+export async function getCategory(handle: string): Promise<ReflowCategory | undefined> {
+  const res = await reflowFetch<ReflowCategory>({
+    method: 'GET',
+    endpoint: 'categories/' + handle
+  });
+
+  let category = res.body;
+  return category;
 }
 
 export async function getProducts(
@@ -99,7 +102,7 @@ export async function getProduct(handle: string): Promise<ReflowProduct | undefi
   return product;
 }
 
-export async function getCategories(): Promise<SearchCategory[]> {
+export async function getSearchCategories(): Promise<SearchCategory[]> {
   let reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
     endpoint: 'categories/'
@@ -108,18 +111,12 @@ export async function getCategories(): Promise<SearchCategory[]> {
     {
       handle: '',
       title: 'All',
-      seo: {
-        title: 'All'
-      },
       path: '/search',
       updatedAt: new Date().toISOString()
     },
     ...reflowCategories.body.map((category: ReflowCategory) => ({
       handle: category.id,
       title: category.name,
-      seo: {
-        title: category.name
-      },
       path: `/search/${category.id}`,
       updatedAt: new Date().toISOString()
     }))

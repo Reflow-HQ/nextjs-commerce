@@ -29,16 +29,15 @@ export type Media =
 export type ReflowCategory = {
   object: 'category';
   id: string;
+  handle: string;
   name: string;
+  description: string;
   subcategories: object[];
 };
 
 export type SearchCategory = {
   handle: string;
   title: string;
-  seo: {
-    title: string;
-  };
   path: string;
   updatedAt: string;
 };

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import Grid from 'components/grid';
 import ProductGridItems from 'components/layout/product-grid-items';
 import { defaultSort, sorting } from 'lib/constants';
+import { getCategory } from 'lib/reflow';
 
 export const runtime = 'edge';
 
@@ -13,22 +14,14 @@ export async function generateMetadata({
 }: {
   params: { category: string };
 }): Promise<Metadata> {
-  return {
-    title: 'Category name',
-    description: 'Category description'
-  };
-
-  // TODO: add get category API route
-  // TODO: add handles to categories
-  // TODO: add descriptions to categories
 
   const category = await getCategory(params.category);
 
   if (!category) return notFound();
 
   return {
-    title: category.seo?.title || category.title,
-    description: category.seo?.description || category.description || `${category.title} products`
+    title: category.name,
+    description: category.description || `${category.name} products`
   };
 }
 

@@ -1,19 +1,19 @@
 import clsx from 'clsx';
 import { Suspense } from 'react';
 
-import { getCategories } from 'lib/reflow';
+import { getSearchCategories } from 'lib/reflow';
 import FilterList from './filter';
 
-async function CollectionList() {
-  const collections = await getCategories();
-  return <FilterList list={collections} title="Collections" />;
+async function CategoriesList() {
+  const categories = await getSearchCategories();
+  return <FilterList list={categories} title="Categories" />;
 }
 
 const skeleton = 'mb-3 h-4 w-5/6 animate-pulse rounded';
 const activeAndTitles = 'bg-neutral-800 dark:bg-neutral-300';
 const items = 'bg-neutral-400 dark:bg-neutral-700';
 
-export default function Collections() {
+export default function Categories() {
   return (
     <Suspense
       fallback={
@@ -31,7 +31,7 @@ export default function Collections() {
         </div>
       }
     >
-      <CollectionList />
+      <CategoriesList />
     </Suspense>
   );
 }
