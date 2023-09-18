@@ -1,8 +1,12 @@
 const youtubeVideoGroupsRegex = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
 
-const getIdFromYoutubeVideo = (videoUrl: string) => videoUrl.match(youtubeVideoGroupsRegex)[1];
+const getIdFromYoutubeVideo = (videoUrl?: string) => {
+  if (!videoUrl) return null;
+  let match = videoUrl.match(youtubeVideoGroupsRegex);
+  if (match?.length) return match[1];
+};
 
-const getYoutubePreviewImage = (videoUrl: string) => {
+const getYoutubePreviewImage = (videoUrl?: string) => {
 
   let videoID = getIdFromYoutubeVideo(videoUrl);
 
@@ -13,7 +17,7 @@ const getYoutubePreviewImage = (videoUrl: string) => {
   };
 };
 
-const getYoutubeEmbed = (videoUrl: string) => {
+const getYoutubeEmbed = (videoUrl?: string) => {
   return 'https://www.youtube.com/embed/' + getIdFromYoutubeVideo(videoUrl);
 };
 

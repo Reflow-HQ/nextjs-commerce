@@ -42,6 +42,18 @@ export type SearchCategory = {
   updatedAt: string;
 };
 
+export type ReflowProductVariant = {
+  id: string;
+  sku?: string;
+  name: string;
+  price: number;
+  price_formatted: string;
+  in_stock: boolean;
+  quantity?: number;
+  original_price?: number;
+  original_price_formatted?: string;
+};
+
 export type ReflowProduct = {
   object: 'product';
   id: string;
@@ -61,7 +73,7 @@ export type ReflowProduct = {
   variants: {
     enabled: boolean,
     option_name: string,
-    items: object[]
+    items: ReflowProductVariant[]
   };
   categories: ReflowCategory[];
   inventory_type: string;

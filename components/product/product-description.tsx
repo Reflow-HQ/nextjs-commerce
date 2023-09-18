@@ -1,7 +1,6 @@
 'use client'
-// TODO: only addtocart should be 'use client' here
 
-import { AddToCart, useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified code
+import { AddToCart, useCart } from "@reflowhq/cart-react";
 import Price from 'components/price';
 import Prose from 'components/prose';
 import { ReflowProduct } from 'lib/reflow/types';

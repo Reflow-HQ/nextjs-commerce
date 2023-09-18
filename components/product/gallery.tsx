@@ -46,7 +46,7 @@ export function Gallery({ media }: { media: { type: 'image' | 'video'; src: stri
               className="h-full w-full"
               frameBorder="0"
               allowFullScreen={true}
-              src={getYoutubeEmbed(media[mediaIndex].src)}
+              src={getYoutubeEmbed(media[mediaIndex]?.src)}
             />
         )}
 

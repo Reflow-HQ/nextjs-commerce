@@ -1,7 +1,7 @@
 'use client'
 
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified code
+import { useCart } from "@reflowhq/cart-react";
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
@@ -19,7 +19,7 @@ export default function OpenCart({
     cart.refresh();
   }
 
-  const quantityRef = useRef(cart.quantity); // TODO: this isn't documented in reflow-libs, seems useful
+  const quantityRef = useRef(cart.quantity);
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
