@@ -1,4 +1,4 @@
-// import "@reflowhq/cart-react/src/cartview.css"; TODO: can't for the life of me make this work, copied styles to reflow.css ¯\_(ツ)_/¯
+import "@reflowhq/cart-react/dist/style.css";
 import Navbar from 'components/layout/navbar';
 import { ensureStartsWith } from 'lib/utils';
 import { Inter } from 'next/font/google';
@@ -6,7 +6,6 @@ import { ReactNode, Suspense } from 'react';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import './globals.css';
-import './reflow.css';
 
 const { TWITTER_CREATOR, TWITTER_SITE, SITE_NAME } = process.env;
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
