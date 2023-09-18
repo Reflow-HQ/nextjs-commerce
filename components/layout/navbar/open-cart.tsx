@@ -5,7 +5,7 @@ import { useCart } from "@reflowhq/cart-react"; // TODO: this leads to minified 
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
-export function OpenCart({
+export default function OpenCart({
   className,
 }: {
   className?: string;

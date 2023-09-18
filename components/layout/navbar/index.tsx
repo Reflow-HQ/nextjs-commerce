@@ -3,9 +3,14 @@ import { getNavigationMenu } from 'lib/reflow';
 import { Menu } from 'lib/reflow/types';
 import Link from 'next/link';
 import MobileMenu from './mobile-menu';
-import { OpenCartDynamic } from './open-cart-dynamic';
 import Search from './search';
 const { SITE_NAME } = process.env;
+
+import dynamic from 'next/dynamic';
+
+const DynamicOpenCart = dynamic(() => import('./open-cart'), {
+  ssr: false,
+})
 
 export default async function Navbar() {
   const menu = await getNavigationMenu();
@@ -42,7 +47,7 @@ export default async function Navbar() {
           <Search />
         </div>
         <div className="flex justify-end md:w-1/3">
-          <OpenCartDynamic />
+          <DynamicOpenCart />
         </div>
       </div>
     </nav>

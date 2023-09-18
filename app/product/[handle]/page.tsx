@@ -4,9 +4,13 @@ import { Suspense } from 'react';
 
 import Footer from 'components/layout/footer';
 import { Gallery } from 'components/product/gallery';
-import { ProductDescriptionDynamic } from 'components/product/product-description-dynamic';
 import { getProduct } from 'lib/reflow';
 import { Media } from 'lib/reflow/types';
+import dynamic from 'next/dynamic';
+
+const DynamicProductDescription = dynamic(() => import('components/product/product-description'), {
+  ssr: false,
+})
 
 export const runtime = 'edge';
 
@@ -108,7 +112,7 @@ export default async function ProductPage({ params }: { params: { handle: string
           </div>
 
           <div className="basis-full lg:basis-2/6">
-            <ProductDescriptionDynamic product={product} />
+            <DynamicProductDescription product={product} />
           </div>
         </div>
       </div>

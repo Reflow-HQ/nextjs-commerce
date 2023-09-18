@@ -8,7 +8,7 @@ import { ReflowProduct } from 'lib/reflow/types';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-export function ProductDescription({ product }: { product: ReflowProduct }) {
+export default function ProductDescription({ product }: { product: ReflowProduct }) {
 
   const cart = useCart({
     storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID

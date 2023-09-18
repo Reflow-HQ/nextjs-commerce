@@ -3,7 +3,7 @@
 import useAuth from "@reflowhq/auth-react";
 import CartView, { useCart } from "@reflowhq/cart-react";
 
-export function Cart({
+export default function Cart({
   className,
 }: {
   className?: string;
