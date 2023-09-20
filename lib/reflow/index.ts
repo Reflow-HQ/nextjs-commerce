@@ -168,24 +168,41 @@ export async function getNavigationMenu(): Promise<Menu[]> {
   return menuItems;
 }
 
-
-// TODO: this
-
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.
 export async function revalidate(req: NextRequest): Promise<NextResponse> {
   // We always need to respond with a 200 status code to Reflow,
   // otherwise it will continue to retry the request.
-  const categoryWebhooks = ['categories/create', 'categories/delete', 'categories/update'];
-  const productWebhooks = ['products/create', 'products/delete', 'products/update'];
-  const topic = headers().get('x-shopify-topic') || 'unknown';
-  const secret = req.nextUrl.searchParams.get('secret');
-  const isCategoriesUpdate = categoryWebhooks.includes(topic);
-  const isProductUpdate = productWebhooks.includes(topic);
 
-  if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
-    console.error('Invalid revalidation secret.');
+  const body = await req.json();
+
+  // Validate event signature
+  const signatureSecret = process.env.REFLOW_WEBHOOK_SIGNING_SECRET;
+  if (signatureSecret) {
+
+    try {
+      const receivedSignature = headers().get('signature') || 'unknown';
+      const computedSignature = await getComputedSignature(signatureSecret, JSON.stringify(body));
+
+      if (computedSignature !== receivedSignature) {
+        console.error('Invalid webhook signed signature.');
+        return NextResponse.json({ status: 200 });
+      }
+    } catch (error) {
+      console.error('Error calculating signed signature');
+      return NextResponse.json({ status: 200 });
+    }
+  }
+  else {
+    console.warn('Webhook signing secret not defined in .env file. Revalidation requests are not verified.');
+  }
+
+  // Check the livemode of the incoming webhook event. The following code is for stores in production mode.
+  if (!body.livemode) {
     return NextResponse.json({ status: 200 });
   }
+
+  const isCategoriesUpdate = body?.type == 'categories.changed';
+  const isProductUpdate = body?.type == 'products.changed';
 
   if (!isCategoriesUpdate && !isProductUpdate) {
     // We don't need to revalidate anything for any other topics.
@@ -201,4 +218,24 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   }
 
   return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
+}
+
+async function getComputedSignature(key: string, event: string) {
+  const encoder = new TextEncoder();
+  const encodedKey = encoder.encode(key);
+  const encodedData = encoder.encode(event);
+
+  const importedKey = await crypto.subtle.importKey(
+    'raw',
+    encodedKey,
+    { name: 'HMAC', hash: { name: 'SHA-256' } },
+    false,
+    ['sign']
+  );
+
+  const signatureBuffer = await crypto.subtle.sign('HMAC', importedKey, encodedData);
+  const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+  const computedSignature = signatureArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+  return computedSignature;
 }
