@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { GridTileImage } from './grid/tile';
 
 export async function Carousel() {
-  const products = await getProducts({ page: 1 });
+  const products = (await getProducts({ page: 1 })).data;
 
   if (!products?.length) return null;
 

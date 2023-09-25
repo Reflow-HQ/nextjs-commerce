@@ -1,5 +1,6 @@
 import Grid from 'components/grid';
 import ProductGridItems from 'components/layout/product-grid-items';
+import ProductPagination from 'components/layout/product-pagination';
 import { defaultSort, sorting } from 'lib/constants';
 import { getProducts } from 'lib/reflow';
 
@@ -15,26 +16,29 @@ export default async function SearchPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const { sort, q: searchValue } = searchParams as { [key: string]: string };
+  const { sort, q: searchValue, page } = searchParams as { [key: string]: string };
   const { orderKey } = sorting.find((item) => item.slug === sort) || defaultSort;
 
-  const products = await getProducts({ order: orderKey, search: searchValue || '' });
-  const resultsText = products.length > 1 ? 'results' : 'result';
+  const products = await getProducts({ order: orderKey, search: searchValue || '', page: page ? parseInt(page) : undefined });
+  const resultsText = products.data.length > 1 ? 'results' : 'result';
 
   return (
     <>
       {searchValue ? (
         <p className="mb-4">
-          {products.length === 0
+          {products.data.length === 0
             ? 'There are no products that match '
-            : `Showing ${products.length} ${resultsText} for `}
+            : `Showing ${products.data.length} ${resultsText} for `}
           <span className="font-bold">&quot;{searchValue}&quot;</span>
         </p>
       ) : null}
-      {products.length > 0 ? (
-        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <ProductGridItems products={products} />
-        </Grid>
+      {products.data.length > 0 ? (
+        <>
+          <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <ProductGridItems products={products.data} />
+          </Grid>
+          <ProductPagination paginationMeta={products.meta} />
+        </>
       ) : null}
     </>
   );

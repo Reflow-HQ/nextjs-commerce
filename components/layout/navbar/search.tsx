@@ -24,6 +24,7 @@ export default function Search() {
 
     if (search.value) {
       newParams.set('q', search.value);
+      newParams.delete('page');
     } else {
       newParams.delete('q');
     }

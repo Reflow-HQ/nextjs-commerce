@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   Menu,
   ReflowCategory,
-  ReflowPaginatedProductsResponse,
+  ReflowPaginatedProducts,
   ReflowProduct,
   ReflowProductsRequestBody,
   SearchCategory
@@ -85,20 +85,19 @@ export async function getCategory(handle: string): Promise<ReflowCategory | unde
 
 export async function getProducts(
   requestBody: ReflowProductsRequestBody
-): Promise<ReflowProduct[]> {
+): Promise<ReflowPaginatedProducts> {
 
   let tags = [TAGS.products];
   if (requestBody.category) tags.push(TAGS.categories);
 
-  const res = await reflowFetch<ReflowPaginatedProductsResponse>({
+  const res = await reflowFetch<ReflowPaginatedProducts>({
     method: 'GET',
     endpoint: 'products/',
     requestData: requestBody,
     tags
   });
 
-  let products = res.body.data;
-  return products;
+  return res.body;
 }
 
 export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {

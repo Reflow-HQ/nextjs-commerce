@@ -41,12 +41,12 @@ function ThreeItemGridItem({
 }
 
 export async function ThreeItemGrid() {
-  const homepageItems = await getProducts({
+  const homepageItems = (await getProducts({
     category: process.env.FEATURED_PRODUCTS_CATEGORY,
     page: 1,
     perpage: 3,
     order: 'custom_desc'
-  });
+  })).data;
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;
 

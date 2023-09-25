@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import Grid from 'components/grid';
 import ProductGridItems from 'components/layout/product-grid-items';
+import ProductPagination from 'components/layout/product-pagination';
 import { defaultSort, sorting } from 'lib/constants';
 import { getCategory } from 'lib/reflow';
 
@@ -32,18 +33,21 @@ export default async function CategoryPage({
   params: { category: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const { sort } = searchParams as { [key: string]: string };
+  const { sort, page } = searchParams as { [key: string]: string };
   const { orderKey } = sorting.find((item) => item.slug === sort) || defaultSort;
-  const products = await getProducts({ category: params.category, order: orderKey });
+  const products = await getProducts({ category: params.category, order: orderKey, page: page ? parseInt(page) : undefined });
 
   return (
     <section>
-      {products.length === 0 ? (
+      {products.data.length === 0 ? (
         <p className="py-3 text-lg">{`No products found in this category`}</p>
       ) : (
-        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <ProductGridItems products={products} />
-        </Grid>
+        <>
+          <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <ProductGridItems products={products.data} />
+          </Grid>
+          <ProductPagination paginationMeta={products.meta} />
+        </>
       )}
     </section>
   );

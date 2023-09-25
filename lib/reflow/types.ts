@@ -103,10 +103,28 @@ export type ReflowProductsRequestBody = {
   | 'custom_desc';
 };
 
-export type ReflowPaginatedProductsResponse = {
+export type ReflowPaginationLinks = {
+  first?: string;
+  last?: string;
+  prev?: string;
+  next?: string;
+}
+
+export type ReflowPaginationMeta = {
+  current_page: number;
+  from: number;
+  last_page: number;
+  links: object;
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+}
+
+export type ReflowPaginatedProducts = {
   data: ReflowProduct[];
-  links: object; // Pagination links
-  meta: object; // Pagination metadata
+  links: ReflowPaginationLinks;
+  meta: ReflowPaginationMeta;
 };
 
 export type Menu = {
