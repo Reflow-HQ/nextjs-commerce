@@ -13,8 +13,6 @@ export default function ProductDescription({ product }: { product: ReflowProduct
     storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID
   });
 
-  // TODO: maybe get selected variant from page url instead of state?
-
   const [selectedVariant, setSelectedVariant] = useState(product.variants.enabled ? product.variants.items[0] : null);
   const [displayPrice, setDisplayPrice] = useState(selectedVariant ? selectedVariant.price : product.price);
 
@@ -38,19 +36,17 @@ export default function ProductDescription({ product }: { product: ReflowProduct
         />
       ) : null}
 
-      {/* TODO: change shown price on variant select. Product to test is Coffee Pot */}
-      {/* TODO: decide what to do with add to cart out of stock variants */}
-
       <AddToCart
         key={product.id}
         cart={cart}
         product={product}
+        onVariantSelect={(variant: any) => {
+          setSelectedVariant(variant);
+        }}
         onMessage={(message: any) => {
-          toast("Added to cart!")
+          toast(message.title)
         }}
       />
-
-      <button className="ref-button" onClick={() => setSelectedVariant(product.variants.enabled ? product.variants.items[1] : null)}>Test change variant display price</button>
     </>
   );
 }

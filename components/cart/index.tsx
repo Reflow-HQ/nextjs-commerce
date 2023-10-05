@@ -2,6 +2,7 @@
 
 import useAuth from "@reflowhq/auth-react";
 import CartView, { useCart } from "@reflowhq/cart-react";
+import { toast } from 'react-toastify';
 
 export default function Cart({
   className,
@@ -24,7 +25,15 @@ export default function Cart({
         successURL={"https://example.com/success"}
         cancelURL={"https://example.com/cancel"}
         onMessage={(message: any) => {
-          console.log(message.type, message.title, message.description);
+
+          const toastMessageHTML = <div><h6>{ message.title }</h6>{ message.description ? <p className="text-sm">{message.description}</p> : ''}</div>;
+
+          if (message.type == 'success') {
+            toast.success(({ closeToast }) => toastMessageHTML)
+          }
+          else if (message.type == 'error') {
+            toast.error(({ closeToast }) => toastMessageHTML)
+          }
         }}
       />
     </div>
