@@ -1,16 +1,16 @@
-import LogoSquare from 'components/logo-square';
-import { getNavigationMenu } from 'lib/reflow';
-import { Menu } from 'lib/reflow/types';
-import Link from 'next/link';
-import MobileMenu from './mobile-menu';
-import Search from './search';
+import LogoSquare from "components/logo-square";
+import { getNavigationMenu } from "lib/reflow";
+import { Menu } from "lib/reflow/types";
+import Link from "next/link";
+import MobileMenu from "./mobile-menu";
+import Search from "./search";
 const { SITE_NAME } = process.env;
 
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const DynamicOpenCart = dynamic(() => import('./open-cart'), {
+const DynamicOpenCart = dynamic(() => import("./open-cart"), {
   ssr: false,
-})
+});
 
 export default async function Navbar() {
   const menu = await getNavigationMenu();
@@ -22,7 +22,10 @@ export default async function Navbar() {
       </div>
       <div className="flex w-full items-center">
         <div className="flex w-full md:w-1/3">
-          <Link href="/" className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6">
+          <Link
+            href="/"
+            className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6"
+          >
             <LogoSquare />
             <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
               {SITE_NAME}

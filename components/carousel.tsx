@@ -1,6 +1,6 @@
-import { getProducts } from 'lib/reflow';
-import Link from 'next/link';
-import { GridTileImage } from './grid/tile';
+import { getProducts } from "lib/reflow";
+import Link from "next/link";
+import { GridTileImage } from "./grid/tile";
 
 export async function Carousel() {
   const products = (await getProducts({ page: 1 })).data;
@@ -27,7 +27,7 @@ export async function Carousel() {
                 label={{
                   title: product.name,
                   amount: product.price_range.sort()[0],
-                  currency: product.currency
+                  currency: product.currency,
                 }}
                 src={product.image.md}
                 fill

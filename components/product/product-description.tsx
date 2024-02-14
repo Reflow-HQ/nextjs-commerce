@@ -1,22 +1,26 @@
-'use client';
+"use client";
 
-import { AddToCart, useCart } from '@reflowhq/cart-react';
-import Price from 'components/price';
-import Prose from 'components/prose';
-import { ReflowProduct } from 'lib/reflow/types';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { AddToCart, useCart } from "@reflowhq/cart-react";
+import Price from "components/price";
+import Prose from "components/prose";
+import { ReflowProduct } from "lib/reflow/types";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-export default function ProductDescription({ product }: { product: ReflowProduct }) {
+export default function ProductDescription({
+  product,
+}: {
+  product: ReflowProduct;
+}) {
   const cart = useCart({
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID
+    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
   });
 
   const [selectedVariant, setSelectedVariant] = useState(
-    product.variants.enabled ? product.variants.items[0] : null
+    product.variants.enabled ? product.variants.items[0] : null,
   );
   const [displayPrice, setDisplayPrice] = useState(
-    selectedVariant ? selectedVariant.price : product.price
+    selectedVariant ? selectedVariant.price : product.price,
   );
 
   useEffect(() => {

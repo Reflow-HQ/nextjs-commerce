@@ -2,7 +2,7 @@
 
 module.exports = {
   images: {
-    // Images are loaded from CDN, no need for further nextjs optimization 
+    // Images are loaded from CDN, no need for further nextjs optimization
     unoptimized: true,
-  }
+  },
 };

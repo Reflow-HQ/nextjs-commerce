@@ -1,9 +1,13 @@
-import Grid from 'components/grid';
-import { GridTileImage } from 'components/grid/tile';
-import { ReflowProduct } from 'lib/reflow/types';
-import Link from 'next/link';
+import Grid from "components/grid";
+import { GridTileImage } from "components/grid/tile";
+import { ReflowProduct } from "lib/reflow/types";
+import Link from "next/link";
 
-export default function ProductGridItems({ products }: { products: ReflowProduct[] }) {
+export default function ProductGridItems({
+  products,
+}: {
+  products: ReflowProduct[];
+}) {
   return (
     <>
       {products.map((product) => (
@@ -17,7 +21,7 @@ export default function ProductGridItems({ products }: { products: ReflowProduct
               label={{
                 title: product.name,
                 amount: product.price_range.sort()[0],
-                currency: product.currency
+                currency: product.currency,
               }}
               src={product.image.md}
               fill

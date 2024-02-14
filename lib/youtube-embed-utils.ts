@@ -11,14 +11,14 @@ const getYoutubePreviewImage = (videoUrl?: string) => {
   const videoID = getIdFromYoutubeVideo(videoUrl);
 
   return {
-    sm: 'https://img.youtube.com/vi/' + videoID + '/default.jpg',
-    md: 'https://img.youtube.com/vi/' + videoID + '/mddefault.jpg',
-    lg: 'https://img.youtube.com/vi/' + videoID + '/hqdefault.jpg'
+    sm: "https://img.youtube.com/vi/" + videoID + "/default.jpg",
+    md: "https://img.youtube.com/vi/" + videoID + "/mddefault.jpg",
+    lg: "https://img.youtube.com/vi/" + videoID + "/hqdefault.jpg",
   };
 };
 
 const getYoutubeEmbed = (videoUrl?: string) => {
-  return 'https://www.youtube.com/embed/' + getIdFromYoutubeVideo(videoUrl);
+  return "https://www.youtube.com/embed/" + getIdFromYoutubeVideo(videoUrl);
 };
 
 export { getYoutubeEmbed, getYoutubePreviewImage };

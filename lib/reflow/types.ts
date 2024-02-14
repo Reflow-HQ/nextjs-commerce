@@ -16,18 +16,18 @@ export type ImageSources = {
 
 export type Media =
   | {
-    id: string;
-    type: 'image';
-    src: ImageSources;
-  }
+      id: string;
+      type: "image";
+      src: ImageSources;
+    }
   | {
-    id: string;
-    type: 'video';
-    url: string;
-  };
+      id: string;
+      type: "video";
+      url: string;
+    };
 
 export type ReflowCategory = {
-  object: 'category';
+  object: "category";
   id: string;
   handle: string;
   name: string;
@@ -55,7 +55,7 @@ export type ReflowProductVariant = {
 };
 
 export type ReflowProduct = {
-  object: 'product';
+  object: "product";
   id: string;
   name: string;
   handle?: string;
@@ -71,9 +71,9 @@ export type ReflowProduct = {
   image: ImageSources;
   media: Media[];
   variants: {
-    enabled: boolean,
-    option_name: string,
-    items: ReflowProductVariant[]
+    enabled: boolean;
+    option_name: string;
+    items: ReflowProductVariant[];
   };
   categories: ReflowCategory[];
   inventory_type: string;
@@ -93,14 +93,14 @@ export type ReflowProductsRequestBody = {
   category?: string;
   search?: string;
   order?:
-  | 'name_asc'
-  | 'name_desc'
-  | 'price_asc'
-  | 'price_desc'
-  | 'date_asc'
-  | 'date_desc'
-  | 'custom_asc'
-  | 'custom_desc';
+    | "name_asc"
+    | "name_desc"
+    | "price_asc"
+    | "price_desc"
+    | "date_asc"
+    | "date_desc"
+    | "custom_asc"
+    | "custom_desc";
 };
 
 export type ReflowPaginationLinks = {
@@ -108,7 +108,7 @@ export type ReflowPaginationLinks = {
   last?: string;
   prev?: string;
   next?: string;
-}
+};
 
 export type ReflowPaginationMeta = {
   current_page: number;
@@ -119,7 +119,7 @@ export type ReflowPaginationMeta = {
   per_page: number;
   to: number;
   total: number;
-}
+};
 
 export type ReflowPaginatedProducts = {
   data: ReflowProduct[];

@@ -1,34 +1,34 @@
-import { REFLOW_API_URL, TAGS } from 'lib/constants';
-import { ReflowApiError } from 'lib/type-guards';
-import { revalidateTag } from 'next/cache';
-import { headers } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { REFLOW_API_URL, TAGS } from "lib/constants";
+import { ReflowApiError } from "lib/type-guards";
+import { revalidateTag } from "next/cache";
+import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 import {
   Menu,
   ReflowCategory,
   ReflowPaginatedProducts,
   ReflowProduct,
   ReflowProductsRequestBody,
-  SearchCategory
-} from './types';
+  SearchCategory,
+} from "./types";
 
 export async function reflowFetch<T>({
   headers,
   endpoint,
   method,
   requestData = {},
-  tags
+  tags,
 }: {
   headers?: HeadersInit;
   endpoint?: string;
-  method?: 'GET' | 'POST' | 'DELETE';
+  method?: "GET" | "POST" | "DELETE";
   requestData?: object;
   tags?: string[];
 }): Promise<{ status: number; body: T } | never> {
   try {
     let requestUrl = `${REFLOW_API_URL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
 
-    if (method == 'GET' && Object.values(requestData).length) {
+    if (method == "GET" && Object.values(requestData).length) {
       const searchParams = new URLSearchParams({ ...requestData });
       requestUrl = `${requestUrl}?${searchParams.toString()}`;
     }
@@ -36,17 +36,17 @@ export async function reflowFetch<T>({
     const result = await fetch(requestUrl, {
       method,
       headers: {
-        'Content-Type': 'application/json',
-        ...headers
+        "Content-Type": "application/json",
+        ...headers,
       },
-      body: method == 'POST' ? JSON.stringify(requestData) : null,
-      ...(tags && { next: { tags } })
+      body: method == "POST" ? JSON.stringify(requestData) : null,
+      ...(tags && { next: { tags } }),
     });
 
     const body = await result.json();
 
     if (!result.ok) {
-      const err = new ReflowApiError(body.error || 'HTTP error');
+      const err = new ReflowApiError(body.error || "HTTP error");
       err.endpoint = requestUrl;
       err.status = result.status;
       err.body = body;
@@ -55,28 +55,30 @@ export async function reflowFetch<T>({
 
     return {
       status: result.status,
-      body
+      body,
     };
   } catch (e) {
     if (e instanceof ReflowApiError) {
       throw {
         endpoint: e.endpoint,
         status: e.status || 500,
-        body: e.body
+        body: e.body,
       };
     }
 
     throw {
-      error: e
+      error: e,
     };
   }
 }
 
-export async function getCategory(handle: string): Promise<ReflowCategory | undefined> {
+export async function getCategory(
+  handle: string,
+): Promise<ReflowCategory | undefined> {
   const res = await reflowFetch<ReflowCategory>({
-    method: 'GET',
-    endpoint: 'categories/' + handle,
-    tags: [TAGS.categories]
+    method: "GET",
+    endpoint: "categories/" + handle,
+    tags: [TAGS.categories],
   });
 
   const category = res.body;
@@ -84,26 +86,28 @@ export async function getCategory(handle: string): Promise<ReflowCategory | unde
 }
 
 export async function getProducts(
-  requestBody: ReflowProductsRequestBody
+  requestBody: ReflowProductsRequestBody,
 ): Promise<ReflowPaginatedProducts> {
   const tags = [TAGS.products];
   if (requestBody.category) tags.push(TAGS.categories);
 
   const res = await reflowFetch<ReflowPaginatedProducts>({
-    method: 'GET',
-    endpoint: 'products/',
+    method: "GET",
+    endpoint: "products/",
     requestData: requestBody,
-    tags
+    tags,
   });
 
   return res.body;
 }
 
-export async function getProduct(handle: string): Promise<ReflowProduct | undefined> {
+export async function getProduct(
+  handle: string,
+): Promise<ReflowProduct | undefined> {
   const res = await reflowFetch<ReflowProduct>({
-    method: 'GET',
-    endpoint: 'products/' + handle,
-    tags: [TAGS.products]
+    method: "GET",
+    endpoint: "products/" + handle,
+    tags: [TAGS.products],
   });
 
   const product = res.body;
@@ -112,43 +116,43 @@ export async function getProduct(handle: string): Promise<ReflowProduct | undefi
 
 export async function getSearchCategories(): Promise<SearchCategory[]> {
   const reflowCategories = await reflowFetch<ReflowCategory[]>({
-    method: 'GET',
-    endpoint: 'categories/',
-    tags: [TAGS.categories]
+    method: "GET",
+    endpoint: "categories/",
+    tags: [TAGS.categories],
   });
   const categories = [
     {
-      handle: '',
-      title: 'All',
-      path: '/search',
-      updatedAt: new Date().toISOString()
+      handle: "",
+      title: "All",
+      path: "/search",
+      updatedAt: new Date().toISOString(),
     },
     ...reflowCategories.body.map((category: ReflowCategory) => ({
       handle: category.id,
       title: category.name,
       path: `/search/${category.id}`,
-      updatedAt: new Date().toISOString()
-    }))
+      updatedAt: new Date().toISOString(),
+    })),
   ];
 
   return categories;
 }
 
 export async function getNavigationMenu(): Promise<Menu[]> {
-  const navigation = process.env.NAV_CATEGORIES?.split(',') || [];
-  const pagePath = '/search/';
+  const navigation = process.env.NAV_CATEGORIES?.split(",") || [];
+  const pagePath = "/search/";
 
   const reflowCategories = await reflowFetch<ReflowCategory[]>({
-    method: 'GET',
-    endpoint: 'categories/',
-    tags: [TAGS.categories]
+    method: "GET",
+    endpoint: "categories/",
+    tags: [TAGS.categories],
   });
 
   const menuItems = [
     {
-      title: 'All Products',
-      path: pagePath
-    }
+      title: "All Products",
+      path: pagePath,
+    },
   ];
 
   for (const navCategory of navigation) {
@@ -159,7 +163,7 @@ export async function getNavigationMenu(): Promise<Menu[]> {
     }
     menuItems.push({
       title: category.name,
-      path: `${pagePath}${category.id}`
+      path: `${pagePath}${category.id}`,
     });
   }
 
@@ -177,20 +181,23 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const signatureSecret = process.env.REFLOW_WEBHOOK_SIGNING_SECRET;
   if (signatureSecret) {
     try {
-      const receivedSignature = headers().get('signature') || 'unknown';
-      const computedSignature = await getComputedSignature(signatureSecret, JSON.stringify(body));
+      const receivedSignature = headers().get("signature") || "unknown";
+      const computedSignature = await getComputedSignature(
+        signatureSecret,
+        JSON.stringify(body),
+      );
 
       if (computedSignature !== receivedSignature) {
-        console.error('Invalid webhook signed signature.');
+        console.error("Invalid webhook signed signature.");
         return NextResponse.json({ status: 200 });
       }
     } catch (error) {
-      console.error('Error calculating signed signature');
+      console.error("Error calculating signed signature");
       return NextResponse.json({ status: 200 });
     }
   } else {
     console.warn(
-      'Webhook signing secret not defined in .env file. Revalidation requests are not verified.'
+      "Webhook signing secret not defined in .env file. Revalidation requests are not verified.",
     );
   }
 
@@ -199,8 +206,8 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ status: 200 });
   }
 
-  const isCategoriesUpdate = body?.type == 'categories.changed';
-  const isProductUpdate = body?.type == 'products.changed';
+  const isCategoriesUpdate = body?.type == "categories.changed";
+  const isProductUpdate = body?.type == "products.changed";
 
   if (!isCategoriesUpdate && !isProductUpdate) {
     // We don't need to revalidate anything for any other topics.
@@ -224,18 +231,22 @@ async function getComputedSignature(key: string, event: string) {
   const encodedData = encoder.encode(event);
 
   const importedKey = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     encodedKey,
-    { name: 'HMAC', hash: { name: 'SHA-256' } },
+    { name: "HMAC", hash: { name: "SHA-256" } },
     false,
-    ['sign']
+    ["sign"],
   );
 
-  const signatureBuffer = await crypto.subtle.sign('HMAC', importedKey, encodedData);
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    importedKey,
+    encodedData,
+  );
   const signatureArray = Array.from(new Uint8Array(signatureBuffer));
   const computedSignature = signatureArray
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 
   return computedSignature;
 }

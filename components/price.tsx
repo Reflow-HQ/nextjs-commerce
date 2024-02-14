@@ -1,17 +1,17 @@
-import clsx from 'clsx';
-import { Currency } from 'lib/reflow/types';
+import clsx from "clsx";
+import { Currency } from "lib/reflow/types";
 
 const Price = ({
   amount,
   className,
   currency,
-  currencyCodeClassName
+  currencyCodeClassName,
 }: {
   amount: number;
   className?: string;
   currency: Currency;
   currencyCodeClassName?: string;
-} & React.ComponentProps<'p'>) => {
+} & React.ComponentProps<"p">) => {
   let fractionDigits = 0;
 
   if (!currency.zero_decimal) {
@@ -25,12 +25,14 @@ const Price = ({
   return (
     <p suppressHydrationWarning={true} className={className}>
       {`${new Intl.NumberFormat(undefined, {
-        style: 'currency',
+        style: "currency",
         currency: currency.code,
-        currencyDisplay: 'narrowSymbol',
-        maximumFractionDigits: fractionDigits
+        currencyDisplay: "narrowSymbol",
+        maximumFractionDigits: fractionDigits,
       }).format(amount)}`}
-      <span className={clsx('ml-1 inline', currencyCodeClassName)}>{`${currency.code}`}</span>
+      <span
+        className={clsx("ml-1 inline", currencyCodeClassName)}
+      >{`${currency.code}`}</span>
     </p>
   );
 };

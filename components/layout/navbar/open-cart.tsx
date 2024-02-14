@@ -1,19 +1,14 @@
-'use client'
+"use client";
 
-import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useCart } from "@reflowhq/cart-react";
-import clsx from 'clsx';
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import clsx from "clsx";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
-export default function OpenCart({
-  className,
-}: {
-  className?: string;
-}) {
-
+export default function OpenCart({ className }: { className?: string }) {
   const cart = useCart({
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID
+    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
   });
 
   if (!cart.isLoaded) {
@@ -24,7 +19,6 @@ export default function OpenCart({
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
-
     const newQ = cart.quantity || 0;
     const oldQ = quantityRef.current;
 
@@ -37,10 +31,17 @@ export default function OpenCart({
   }, [quantity, cart, quantityRef]);
 
   return (
-    <Link href={'/cart'} className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white" prefetch={false}>
-      <button aria-label="Open cart" >
+    <Link
+      href={"/cart"}
+      className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
+      prefetch={false}
+    >
+      <button aria-label="Open cart">
         <ShoppingCartIcon
-          className={clsx('h-4 transition-all ease-in-out hover:scale-110 ', className)}
+          className={clsx(
+            "h-4 transition-all ease-in-out hover:scale-110 ",
+            className,
+          )}
         />
 
         {quantity ? (

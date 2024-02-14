@@ -1,20 +1,24 @@
-import { GridTileImage } from 'components/grid/tile';
-import { getProducts } from 'lib/reflow';
-import type { ReflowProduct } from 'lib/reflow/types';
-import Link from 'next/link';
+import { GridTileImage } from "components/grid/tile";
+import { getProducts } from "lib/reflow";
+import type { ReflowProduct } from "lib/reflow/types";
+import Link from "next/link";
 
 function ThreeItemGridItem({
   item,
   size,
-  priority
+  priority,
 }: {
   item: ReflowProduct;
-  size: 'full' | 'half';
+  size: "full" | "half";
   priority?: boolean;
 }) {
   return (
     <div
-      className={size === 'full' ? 'md:col-span-4 md:row-span-2' : 'md:col-span-2 md:row-span-1'}
+      className={
+        size === "full"
+          ? "md:col-span-4 md:row-span-2"
+          : "md:col-span-2 md:row-span-1"
+      }
     >
       <Link
         className="relative block aspect-square h-full w-full"
@@ -24,15 +28,17 @@ function ThreeItemGridItem({
           src={item.image.lg}
           fill
           sizes={
-            size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
+            size === "full"
+              ? "(min-width: 768px) 66vw, 100vw"
+              : "(min-width: 768px) 33vw, 100vw"
           }
           priority={priority}
           alt={item.name}
           label={{
-            position: size === 'full' ? 'center' : 'bottom',
+            position: size === "full" ? "center" : "bottom",
             title: item.name as string,
             amount: item.price_range.sort()[0],
-            currency: item.currency
+            currency: item.currency,
           }}
         />
       </Link>
@@ -41,12 +47,14 @@ function ThreeItemGridItem({
 }
 
 export async function ThreeItemGrid() {
-  const homepageItems = (await getProducts({
-    category: process.env.FEATURED_PRODUCTS_CATEGORY,
-    page: 1,
-    perpage: 3,
-    order: 'custom_desc'
-  })).data;
+  const homepageItems = (
+    await getProducts({
+      category: process.env.FEATURED_PRODUCTS_CATEGORY,
+      page: 1,
+      perpage: 3,
+      order: "custom_desc",
+    })
+  ).data;
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;
 

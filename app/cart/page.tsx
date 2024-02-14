@@ -1,20 +1,19 @@
-import Footer from 'components/layout/footer';
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
+import Footer from "components/layout/footer";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
-const DynamicCart = dynamic(() => import('components/cart'), {
+const DynamicCart = dynamic(() => import("components/cart"), {
   ssr: false,
-})
+});
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export const metadata = {
-  title: 'Cart',
-  description: 'View shopping cart and checkout.'
+  title: "Cart",
+  description: "View shopping cart and checkout.",
 };
 
 export default async function CartPage() {
-
   return (
     <>
       <div className="mx-auto max-w-screen-2xl px-4">
