@@ -25,8 +25,8 @@ export default function OpenCart({
 
   useEffect(() => {
 
-    let newQ = cart.quantity || 0;
-    let oldQ = quantityRef.current;
+    const newQ = cart.quantity || 0;
+    const oldQ = quantityRef.current;
 
     if (newQ != oldQ) {
       setQuantity(newQ);

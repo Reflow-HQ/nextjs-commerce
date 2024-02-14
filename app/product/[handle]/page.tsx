@@ -56,9 +56,9 @@ export default async function ProductPage({ params }: { params: { handle: string
 
   if (!product) return notFound();
 
-  let priceRange = product.price_range.sort();
-  let priceRangeLow = priceRange[0];
-  let priceRangeHigh = priceRange.at(-1) || priceRangeLow;
+  const priceRange = product.price_range.sort();
+  const priceRangeLow = priceRange[0];
+  const priceRangeHigh = priceRange.at(-1) || priceRangeLow;
 
   const productJsonLd = {
     '@context': 'https://schema.org',

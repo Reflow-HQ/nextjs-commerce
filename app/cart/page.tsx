@@ -13,11 +13,7 @@ export const metadata = {
   description: 'View shopping cart and checkout.'
 };
 
-export default async function SearchPage({
-  params
-}: {
-  params?: {};
-}) {
+export default async function CartPage() {
 
   return (
     <>

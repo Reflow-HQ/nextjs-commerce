@@ -1,17 +1,12 @@
-'use client'
+'use client';
 
-import useAuth from "@reflowhq/auth-react";
-import CartView, { useCart } from "@reflowhq/cart-react";
+import useAuth from '@reflowhq/auth-react';
+import CartView, { useCart } from '@reflowhq/cart-react';
 import { toast } from 'react-toastify';
 
-export default function Cart({
-  className,
-}: {
-  className?: string;
-}) {
-
+export default function Cart() {
   const config = {
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID
   };
 
   const auth = useAuth(config);
@@ -22,17 +17,20 @@ export default function Cart({
       <CartView
         cart={cart}
         auth={auth}
-        successURL={"https://example.com/success"}
-        cancelURL={"https://example.com/cancel"}
+        successURL={'https://example.com/success'}
+        cancelURL={'https://example.com/cancel'}
         onMessage={(message: any) => {
-
-          const toastMessageHTML = <div><h6>{ message.title }</h6>{ message.description ? <p className="text-sm">{message.description}</p> : ''}</div>;
+          const toastMessageHTML = (
+            <div>
+              <h6>{message.title}</h6>
+              {message.description ? <p className="text-sm">{message.description}</p> : ''}
+            </div>
+          );
 
           if (message.type == 'success') {
-            toast.success(({ closeToast }) => toastMessageHTML)
-          }
-          else if (message.type == 'error') {
-            toast.error(({ closeToast }) => toastMessageHTML)
+            toast.success(({}) => toastMessageHTML);
+          } else if (message.type == 'error') {
+            toast.error(({}) => toastMessageHTML);
           }
         }}
       />

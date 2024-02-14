@@ -29,7 +29,7 @@ export async function reflowFetch<T>({
     let requestUrl = `${REFLOW_API_URL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
 
     if (method == 'GET' && Object.values(requestData).length) {
-      let searchParams = new URLSearchParams({ ...requestData });
+      const searchParams = new URLSearchParams({ ...requestData });
       requestUrl = `${requestUrl}?${searchParams.toString()}`;
     }
 
@@ -46,7 +46,7 @@ export async function reflowFetch<T>({
     const body = await result.json();
 
     if (!result.ok) {
-      let err = new ReflowApiError(body.error || 'HTTP error');
+      const err = new ReflowApiError(body.error || 'HTTP error');
       err.endpoint = requestUrl;
       err.status = result.status;
       err.body = body;
@@ -76,18 +76,17 @@ export async function getCategory(handle: string): Promise<ReflowCategory | unde
   const res = await reflowFetch<ReflowCategory>({
     method: 'GET',
     endpoint: 'categories/' + handle,
-    tags: [TAGS.categories],
+    tags: [TAGS.categories]
   });
 
-  let category = res.body;
+  const category = res.body;
   return category;
 }
 
 export async function getProducts(
   requestBody: ReflowProductsRequestBody
 ): Promise<ReflowPaginatedProducts> {
-
-  let tags = [TAGS.products];
+  const tags = [TAGS.products];
   if (requestBody.category) tags.push(TAGS.categories);
 
   const res = await reflowFetch<ReflowPaginatedProducts>({
@@ -104,18 +103,18 @@ export async function getProduct(handle: string): Promise<ReflowProduct | undefi
   const res = await reflowFetch<ReflowProduct>({
     method: 'GET',
     endpoint: 'products/' + handle,
-    tags: [TAGS.products],
+    tags: [TAGS.products]
   });
 
-  let product = res.body;
+  const product = res.body;
   return product;
 }
 
 export async function getSearchCategories(): Promise<SearchCategory[]> {
-  let reflowCategories = await reflowFetch<ReflowCategory[]>({
+  const reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
     endpoint: 'categories/',
-    tags: [TAGS.categories],
+    tags: [TAGS.categories]
   });
   const categories = [
     {
@@ -139,13 +138,13 @@ export async function getNavigationMenu(): Promise<Menu[]> {
   const navigation = process.env.NAV_CATEGORIES?.split(',') || [];
   const pagePath = '/search/';
 
-  let reflowCategories = await reflowFetch<ReflowCategory[]>({
+  const reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: 'GET',
     endpoint: 'categories/',
-    tags: [TAGS.categories],
+    tags: [TAGS.categories]
   });
 
-  let menuItems = [
+  const menuItems = [
     {
       title: 'All Products',
       path: pagePath
@@ -153,7 +152,7 @@ export async function getNavigationMenu(): Promise<Menu[]> {
   ];
 
   for (const navCategory of navigation) {
-    let category = reflowCategories.body.find((cat) => cat.id == navCategory);
+    const category = reflowCategories.body.find((cat) => cat.id == navCategory);
     if (!category) {
       console.error(`Cannot find menu category with reflow id ${navCategory}`);
       continue;
@@ -177,7 +176,6 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   // Validate event signature
   const signatureSecret = process.env.REFLOW_WEBHOOK_SIGNING_SECRET;
   if (signatureSecret) {
-
     try {
       const receivedSignature = headers().get('signature') || 'unknown';
       const computedSignature = await getComputedSignature(signatureSecret, JSON.stringify(body));
@@ -190,9 +188,10 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
       console.error('Error calculating signed signature');
       return NextResponse.json({ status: 200 });
     }
-  }
-  else {
-    console.warn('Webhook signing secret not defined in .env file. Revalidation requests are not verified.');
+  } else {
+    console.warn(
+      'Webhook signing secret not defined in .env file. Revalidation requests are not verified.'
+    );
   }
 
   // Check the livemode of the incoming webhook event. The following code is for stores in production mode.
@@ -234,7 +233,9 @@ async function getComputedSignature(key: string, event: string) {
 
   const signatureBuffer = await crypto.subtle.sign('HMAC', importedKey, encodedData);
   const signatureArray = Array.from(new Uint8Array(signatureBuffer));
-  const computedSignature = signatureArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const computedSignature = signatureArray
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 
   return computedSignature;
 }
