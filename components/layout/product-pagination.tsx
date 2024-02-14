@@ -13,7 +13,7 @@ export default function ProductPagination({
   return paginationMeta.last_page == 1 ? (
     <></>
   ) : (
-    <div className="flex flex-row mt-6 justify-center	">
+    <div className="mt-6 flex flex-row justify-center	">
       {paginationMeta.current_page > 1 ? (
         <PaginationLink
           key="prev"
@@ -71,8 +71,8 @@ function PaginationLink({
       href={href}
       className={
         current
-          ? "border-solid border-2 border-gray-200 bg-gray-200 rounded px-2 mx-1"
-          : "border-solid border-2 border-neutral-200 dark:border-neutral-800 rounded px-2 mx-1"
+          ? "mx-1 rounded border-2 border-solid border-gray-200 bg-gray-200 px-2"
+          : "mx-1 rounded border-2 border-solid border-neutral-200 px-2 dark:border-neutral-800"
       }
     >
       {text}
