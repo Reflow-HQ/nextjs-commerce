@@ -14,6 +14,7 @@ export default function ProductDescription({
 }) {
   const cart = useCart({
     storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+    testMode: process.env.NEXT_PUBLIC_REFLOW_MODE == "test",
   });
 
   const [selectedVariant, setSelectedVariant] = useState(

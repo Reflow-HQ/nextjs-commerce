@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 export default function OpenCart({ className }: { className?: string }) {
   const cart = useCart({
     storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+    testMode: process.env.NEXT_PUBLIC_REFLOW_MODE == "test",
   });
 
   if (!cart.isLoaded) {

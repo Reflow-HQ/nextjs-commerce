@@ -24,3 +24,4 @@ export const TAGS = {
 
 export const DEFAULT_OPTION = "Default Title";
 export const REFLOW_API_URL = "https://api.reflowhq.com/v2";
+export const REFLOW_TEST_MODE_API_URL = "https://test-api.reflowhq.com/v2";

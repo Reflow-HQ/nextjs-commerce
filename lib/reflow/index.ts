@@ -1,4 +1,4 @@
-import { REFLOW_API_URL, TAGS } from "lib/constants";
+import { REFLOW_API_URL, REFLOW_TEST_MODE_API_URL, TAGS } from "lib/constants";
 import { ReflowApiError } from "lib/type-guards";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
@@ -26,7 +26,12 @@ export async function reflowFetch<T>({
   tags?: string[];
 }): Promise<{ status: number; body: T } | never> {
   try {
-    let requestUrl = `${REFLOW_API_URL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
+    const apiURL =
+      process.env.NEXT_PUBLIC_REFLOW_MODE == "live"
+        ? REFLOW_API_URL
+        : REFLOW_TEST_MODE_API_URL;
+
+    let requestUrl = `${apiURL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
 
     if (method == "GET" && Object.values(requestData).length) {
       const searchParams = new URLSearchParams({ ...requestData });
@@ -201,8 +206,12 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Check the livemode of the incoming webhook event. The following code is for stores in production mode.
-  if (!body.livemode) {
+  // Filter only events matching the configured store mode.
+
+  const appIsLiveMode = process.env.NEXT_PUBLIC_REFLOW_MODE == "live";
+  const webhookIsLiveMode = body.livemode;
+
+  if (appIsLiveMode != webhookIsLiveMode) {
     return NextResponse.json({ status: 200 });
   }
 

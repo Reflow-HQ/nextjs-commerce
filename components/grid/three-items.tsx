@@ -49,7 +49,7 @@ function ThreeItemGridItem({
 export async function ThreeItemGrid() {
   const homepageItems = (
     await getProducts({
-      category: process.env.FEATURED_PRODUCTS_CATEGORY,
+      category: process.env.FRONTPAGE_PRODUCTS_CATEGORY,
       page: 1,
       perpage: 3,
       order: "custom_desc",
