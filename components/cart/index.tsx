@@ -18,8 +18,8 @@ export default function Cart() {
       <CartView
         cart={cart}
         auth={auth}
-        successURL={"https://example.com/success"}
-        cancelURL={"https://example.com/cancel"}
+        successURL={"/order-success"}
+        cancelURL={"/cart"}
         onMessage={(message: any) => {
           const toastMessageHTML = (
             <div>
