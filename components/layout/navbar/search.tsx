@@ -33,7 +33,10 @@ export default function Search() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative w-full max-w-[450px]">
+    <form
+      onSubmit={onSubmit}
+      className="relative w-full max-w-[350px] 2xl:max-w-[450px]"
+    >
       <input
         type="text"
         name="search"

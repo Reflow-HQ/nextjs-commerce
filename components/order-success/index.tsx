@@ -13,7 +13,7 @@ export default function OrderSuccess() {
     if (!orderID) {
       return router.push("/");
     }
-  }, [orderID]);
+  }, [orderID, router]);
 
   return (
     <div>

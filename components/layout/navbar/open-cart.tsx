@@ -34,7 +34,7 @@ export default function OpenCart({ className }: { className?: string }) {
   return (
     <Link
       href={"/cart"}
-      className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
+      className="relative flex h-10 w-10 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
       prefetch={false}
     >
       <button aria-label="Open cart">
