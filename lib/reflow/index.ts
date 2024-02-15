@@ -120,6 +120,7 @@ export async function getProduct(
 }
 
 export async function getSearchCategories(): Promise<SearchCategory[]> {
+  const featuredCategoryID = process.env.FEATURED_PRODUCTS_CATEGORY;
   const reflowCategories = await reflowFetch<ReflowCategory[]>({
     method: "GET",
     endpoint: "categories/",
@@ -132,12 +133,18 @@ export async function getSearchCategories(): Promise<SearchCategory[]> {
       path: "/search",
       updatedAt: new Date().toISOString(),
     },
-    ...reflowCategories.body.map((category: ReflowCategory) => ({
-      handle: category.id,
-      title: category.name,
-      path: `/search/${category.id}`,
-      updatedAt: new Date().toISOString(),
-    })),
+    ...reflowCategories.body
+      .map((category: ReflowCategory) => ({
+        handle: category.id,
+        title: category.name,
+        path: `/search/${category.id}`,
+        updatedAt: new Date().toISOString(),
+      }))
+      .sort((a, b) => {
+        if (a.handle == featuredCategoryID) return -1;
+        if (b.handle == featuredCategoryID) return 1;
+        return 0;
+      }),
   ];
 
   return categories;
