@@ -213,15 +213,6 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Filter only events matching the configured store mode.
-
-  const appIsLiveMode = process.env.NEXT_PUBLIC_REFLOW_MODE == "live";
-  const webhookIsLiveMode = body.livemode;
-
-  if (appIsLiveMode != webhookIsLiveMode) {
-    return NextResponse.json({ status: 200 });
-  }
-
   const isCategoriesUpdate = body?.type == "categories.changed";
   const isProductUpdate = body?.type == "products.changed";
 
@@ -235,6 +226,15 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   }
 
   if (isProductUpdate) {
+    // Revalidate only if the webhook event livemode matches the one from .env.
+
+    const appIsLiveMode = process.env.NEXT_PUBLIC_REFLOW_MODE == "live";
+    const webhookIsLiveMode = body.livemode;
+
+    if (appIsLiveMode != webhookIsLiveMode) {
+      return NextResponse.json({ status: 200 });
+    }
+
     revalidateTag(TAGS.products);
   }
 
