@@ -6,6 +6,15 @@
   html {
     color-scheme: dark;
   }
+
+  :root {
+    --ref-body-bg: #000 !important;
+    --ref-body-color: #fff !important;
+    --ref-secondary-bg: #848e97 !important;
+    --ref-secondary-color: #dee2e6 !important;
+    --ref-tertiary-bg: #111010 !important;
+    --ref-tertiary-color: #f8f9fa !important;
+  }
 }
 
 @supports (font: -apple-system-body) and (-webkit-appearance: none) {

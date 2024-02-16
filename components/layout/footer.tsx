@@ -45,7 +45,7 @@ export default async function Footer() {
           <FooterMenu menu={menu} />
         </Suspense>
         <div className="text-black md:ml-auto">
-          <a href="https://github.com/TODO">
+          <a href="https://github.com/Reflow-HQ/nextjs-commerce">
             <svg
               width="24"
               height="24"

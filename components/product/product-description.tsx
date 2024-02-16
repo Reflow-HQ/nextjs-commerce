@@ -52,9 +52,25 @@ export default function ProductDescription({
           setSelectedVariant(variant);
         }}
         onMessage={(message: any) => {
-          toast(message.title);
+          toast(AddedToCartToast(message));
         }}
       />
     </>
   );
 }
+
+const AddedToCartToast = (message: { title: string; description?: string }) => (
+  <div>
+    <button>{message.title}</button>
+    {message.title == "Product added to cart." ? (
+      <a
+        className="my-2 block w-24 rounded bg-blue-500 p-2 text-center text-sm text-white"
+        href="/cart"
+      >
+        View Cart
+      </a>
+    ) : (
+      ""
+    )}
+  </div>
+);
