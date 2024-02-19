@@ -202,14 +202,20 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
       if (computedSignature !== receivedSignature) {
         console.error("Invalid webhook signed signature.");
         return NextResponse.json(
-          { response: "Invalid webhook signed signature" },
+          {
+            response: "Invalid webhook signed signature",
+            cache_revalidated: false,
+          },
           { status: 200 },
         );
       }
     } catch (error) {
       console.error("Error calculating signed signature");
       return NextResponse.json(
-        { response: "Error calculating signed signature" },
+        {
+          response: "Error calculating signed signature",
+          cache_revalidated: false,
+        },
         { status: 200 },
       );
     }
@@ -225,7 +231,10 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   if (!isCategoriesUpdate && !isProductUpdate) {
     // We don't need to revalidate anything for any other topics.
     return NextResponse.json(
-      { response: "This event does not require cache revalidation" },
+      {
+        response: "This event does not require cache revalidation",
+        cache_revalidated: false,
+      },
       { status: 200 },
     );
   }
@@ -245,6 +254,7 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
         {
           response:
             "This request does not match the .env testmode configuration.",
+          cache_revalidated: false,
         },
         { status: 200 },
       );
@@ -253,7 +263,7 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
     revalidateTag(TAGS.products);
   }
 
-  return NextResponse.json({ revalidated: true, now: Date.now() });
+  return NextResponse.json({ cache_revalidated: true, now: Date.now() });
 }
 
 async function getComputedSignature(key: string, event: string) {
