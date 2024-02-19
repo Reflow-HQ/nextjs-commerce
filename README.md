@@ -62,7 +62,7 @@ This app takes advantage of Next's server side rendering and aggressive cache to
 
 The only downside is that once the site is cached, any changes in your Reflow store (e.g. adding new products) will not be reflected in your live site.
 
-To revalidate the cache and update the store, a webhook request needs to be sent to `/api/revalidate`. You can learn more about Reflow webhooks and how to activate them from the [docs](https://reflowhq.com/docs/api/webhooks).
+To revalidate the cache and update the store, a webhook request needs to be sent to `/api/revalidate`. When a webhook event with type "products.changed" or "categories.changed" is sent to this URL, the cache for pages related to the respective objects will be refreshed.
 
 Below is an example of a successful revalidation webhook event:
 
@@ -95,3 +95,5 @@ Below is an example of a successful revalidation webhook event:
   "status": 200
 }
 ```
+
+You can learn more about Reflow webhooks and how to activate them from the [docs](https://reflowhq.com/docs/api/webhooks).
