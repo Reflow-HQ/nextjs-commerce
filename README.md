@@ -1,65 +1,97 @@
-# Next.js Commerce
+# Reflow Next.js Commerce
 
-A Next.js 13 and App Router-ready ecommerce template featuring:
+A Next.js 14 ecommerce template featuring:
 
-- Next.js App Router
-- Optimized for SEO using Next.js's Metadata
-- React Server Components (RSCs) and Suspense
-- Server Actions for mutations
-- Edge Runtime
-- New fetching and caching paradigms
-- Dynamic OG images
+- Built-in [Reflow](https://reflowhq.com) integration.
+- Great performance thanks to Next.js server caching.
+- Optional user accounts during checkout.
+- Support for Edge Runtime
+- Optimized SEO using Next.js's Metadata
+- Easy cache revalidation with Reflow webhooks.
 - Styling with Tailwind CSS
-- Checkout and payments with Shopify
 - Automatic light/dark mode based on system settings
 
-<h3 id="v1-note"></h3>
+## Store Setup
 
-> Note: Looking for Next.js Commerce v1? View the [code](https://github.com/vercel/commerce/tree/v1), [demo](https://commerce-v1.vercel.store), and [release notes](https://github.com/vercel/commerce/releases/tag/v1).
+The store can be configured using the environment variables found in `.evn.example`.
 
-## Providers
+- For local development, make a copy of the `.env.example` file and rename it to `.env`.
+- For serverless deployment (e.g. [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/)) enter the environment variables during deployment configuration.
 
-Vercel will only be actively maintaining a Shopify version [as outlined in our vision and strategy for Next.js Commerce](https://github.com/vercel/commerce/pull/966).
+Here is a list of the available env variables:
 
-Vercel is happy to partner and work with any commerce provider to help them get a similar template up and running and listed below. Alternative providers should be able to fork this repository and swap out the `lib/reflow` file with their own implementation while leaving the rest of the template mostly unchanged.
+| Prop                            | Required | Description                                                                                                                                                                                                                     |
+| ------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SITE_NAME`                     | _Yes_    | The name of the website. Displayed in various places and used for metadata generation.                                                                                                                                          |
+| `COMPANY_NAME`                  | _No_     | The name of your company. Displayed in the website footer.                                                                                                                                                                      |
+| `NEXT_PUBLIC_REFLOW_STORE_ID`   | _Yes_    | The ID of your Reflow store. You can obtain it from the URL of your store's overview page in the Reflow website.                                                                                                                |
+| `NEXT_PUBLIC_REFLOW_MODE`       | _Yes_    | The mode in which you wish to run this app. Either `live` or `test`. [Learn more](#test-mode)                                                                                                                                   |
+| `FEATURED_PRODUCTS_CATEGORY`    | _Yes_    | The ID of a [category](https://reflowhq.com/docs/guide/categories), the products of which you wish to be prominently displayed on the front page.                                                                               |
+| `NAV_CATEGORIES`                | _Yes_    | A comma-separated list of category IDs that will be included in the site navigation, e.g. `"1111,2222,3333"`                                                                                                                    |
+| `REFLOW_WEBHOOK_SIGNING_SECRET` | _No_     | If using [webhook cache revalidation](#webhook-cache-revalidation) the signing secret is used for verifying the webhook requests. [Learn more](https://reflowhq.com/docs/api/webhooks-integration#verifying-webhook-signatures) |
 
-- Shopify (this repository)
-- [BigCommerce](https://github.com/bigcommerce/nextjs-commerce) ([Demo](https://next-commerce-v2.vercel.app/))
-- [Medusa](https://github.com/medusajs/vercel-commerce) ([Demo](https://medusa-nextjs-commerce.vercel.app/))
-- [Saleor](https://github.com/saleor/nextjs-commerce) ([Demo](https://saleor-commerce.vercel.app/))
-- [Shopware](https://github.com/shopwareLabs/vercel-commerce) ([Demo](https://shopware-vercel-commerce-react.vercel.app/))
-- [Swell](https://github.com/swellstores/verswell-commerce) ([Demo](https://verswell-commerce.vercel.app/))
-- [Umbraco](https://github.com/umbraco/Umbraco.VercelCommerce.Demo) ([Demo](https://vercel-commerce-demo.umbraco.com/))
+> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Reflow store.
 
-> Note: Providers, if you are looking to use similar products for your demo, you can [download these assets](https://drive.google.com/file/d/1q_bKerjrwZgHwCw0ovfUMW6He9VtepO_/view?usp=sharing).
+## Running Locally
 
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
-
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Shopify store.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+After setting the environment variables in the `.env` file locally, you can run the following command to start the development server.
 
 ```bash
 npm install
-npm dev
+npm run dev
 ```
 
 Your app should now be running on [localhost:3000](http://localhost:3000/).
 
-<details>
-  <summary>Expand if you work at Vercel and want to run locally and / or contribute</summary>
+## Production Deployment
 
-1. Run `vc link`.
-1. Select the `Vercel Solutions` scope.
-1. Connect to the existing `commerce-shopify` project.
-1. Run `vc env pull` to get environment variables.
-1. Run `pmpm dev` to ensure everything is working correctly.
-</details>
+In production environments such as [Vercel](https://vercel.com/), the preset Next.js deployment settings should be enough to deploy the app without issues:
 
-## Vercel, Next.js Commerce, and Shopify Integration Guide
+- Install command:`npm install`
+- Build command: `npm run build`
+- Development command:`next`
+- Node version : `18.x`
+- Root directory: `./`
+- Output directory: Next.js default
 
-You can use this comprehensive [integration guide](http://vercel.com/docs/integrations/shopify) with step-by-step instructions on how to configure Shopify as a headless CMS using Next.js Commerce as your headless Shopify storefront on Vercel.
+## Webhook Cache Revalidation
+
+> Note: Next.js cache is disabled when working in a dev environment. This section is applicable only to production builds.
+
+This app takes advantage of Next's server side rendering and aggressive cache to offer the best possible experience to customers. Thanks to the cache, pages that have been visited are saved on the server, after which all subsequent requests are blazing fast.
+
+The only downside is that once the site is cached, any changes in your Reflow store (e.g. adding new products) will not be reflected in your live site.
+
+To revalidate the cache and update the store, a webhook request needs to be sent to `/api/revalidate`. You can learn more about Reflow webhooks and how to activate them from the [docs](https://reflowhq.com/docs/api/webhooks).
+
+Below is an example of a successful revalidation webhook event:
+
+#### Request
+
+```json
+{
+  "id": "evt_304a10e2bae97d4bd8d981657b5d31df0ac1a53f",
+  "object": "event",
+  "api-version": "2023-01-30",
+  "created": 1708361124,
+  "data": {
+    "action": "create",
+    "items": ["1711595600"]
+  },
+  "livemode": true,
+  "request_id": "req_b4030f2987186dd04a0fca3c8ed716912a9752a7",
+  "type": "products.changed"
+}
+```
+
+#### Response
+
+```json
+{
+  "body": {
+    "now": 1708361125284,
+    "cache_revalidated": true
+  },
+  "status": 200
+}
+```
