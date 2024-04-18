@@ -31,7 +31,7 @@ export async function reflowFetch<T>({
         ? REFLOW_API_URL
         : REFLOW_TEST_MODE_API_URL;
 
-    let requestUrl = `${apiURL}/stores/${process.env.NEXT_PUBLIC_REFLOW_STORE_ID}/${endpoint}`;
+    let requestUrl = `${apiURL}/projects/${process.env.NEXT_PUBLIC_REFLOW_PROJECT_ID}/${endpoint}`;
 
     if (method == "GET" && Object.values(requestData).length) {
       const searchParams = new URLSearchParams({ ...requestData });
