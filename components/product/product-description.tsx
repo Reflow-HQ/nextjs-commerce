@@ -13,7 +13,7 @@ export default function ProductDescription({
   product: ReflowProduct;
 }) {
   const cart = useCart({
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+    projectID: process.env.NEXT_PUBLIC_REFLOW_PROJECT_ID,
     testMode: process.env.NEXT_PUBLIC_REFLOW_MODE == "test",
   });
 

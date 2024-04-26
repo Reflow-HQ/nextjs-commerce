@@ -24,13 +24,13 @@ Here is a list of the available env variables:
 | ------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SITE_NAME`                     | _Yes_    | The name of the website. Displayed in various places and used for metadata generation.                                                                                                                                          |
 | `COMPANY_NAME`                  | _No_     | The name of your company. Displayed in the website footer.                                                                                                                                                                      |
-| `NEXT_PUBLIC_REFLOW_STORE_ID`   | _Yes_    | The ID of your Reflow store. You can obtain it from the URL of your store's overview page in the Reflow website.                                                                                                                |
+| `NEXT_PUBLIC_REFLOW_PROJECT_ID` | _Yes_    | The ID of your Reflow project. You can obtain your project ID from the Reflow dashboard [settings page](https://reflowhq.com/project/settings).website.                                                                                                                |
 | `NEXT_PUBLIC_REFLOW_MODE`       | _Yes_    | The mode in which you wish to run this app. Either `live` or `test`. [Learn more](https://reflowhq.com/docs/guide/test-mode)                                                                                                    |
 | `FEATURED_PRODUCTS_CATEGORY`    | _Yes_    | The ID of a [category](https://reflowhq.com/docs/guide/categories), the products of which you wish to be prominently displayed on the front page.                                                                               |
 | `NAV_CATEGORIES`                | _Yes_    | A comma-separated list of category IDs that will be included in the site navigation, e.g. `"1111,2222,3333"`                                                                                                                    |
 | `REFLOW_WEBHOOK_SIGNING_SECRET` | _No_     | If using [webhook cache revalidation](#webhook-cache-revalidation) the signing secret is used for verifying the webhook requests. [Learn more](https://reflowhq.com/docs/api/webhooks-integration#verifying-webhook-signatures) |
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Reflow store.
+> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Reflow project.
 
 ## Running Locally
 
@@ -60,9 +60,9 @@ In production environments such as [Vercel](https://vercel.com/), the preset Nex
 
 This app takes advantage of Next's server side rendering and aggressive cache to offer the best possible experience to customers. Thanks to the cache, pages that have been visited are saved on the server, after which all subsequent requests are blazing fast.
 
-The only downside is that once the site is cached, any changes in your Reflow store (e.g. adding new products) will not be reflected in your live site.
+The only downside is that once the site is cached, any changes in your Reflow project (e.g. adding new products) will not be reflected in your live site.
 
-To revalidate the cache and update the store, a webhook request needs to be sent to `/api/revalidate`. When a webhook event with type **products.changed** or **categories.changed** is sent to this URL, the cache for pages related to the respective objects will be refreshed.
+To revalidate the cache and update the Next.js website, a webhook request needs to be sent to `/api/revalidate`. When a webhook event with type **products.changed** or **categories.changed** is sent to this URL, the cache for pages related to the respective objects will be refreshed.
 
 Below is an example of a successful revalidation webhook event:
 

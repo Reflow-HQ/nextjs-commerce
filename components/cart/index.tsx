@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 export default function Cart() {
   const config = {
-    storeID: process.env.NEXT_PUBLIC_REFLOW_STORE_ID,
+    projectID: process.env.NEXT_PUBLIC_REFLOW_PROJECT_ID,
     testMode: process.env.NEXT_PUBLIC_REFLOW_MODE == "test",
   };
 
