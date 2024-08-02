@@ -120,7 +120,9 @@ export default async function ProductPage({
       <div className="mx-auto max-w-screen-2xl px-4 md:px-6">
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:flex-row lg:gap-8 dark:border-neutral-800 dark:bg-black">
           <div className="h-full w-full basis-full lg:basis-4/6">
-            <Gallery media={galleryMedia} />
+            <Suspense>
+              <Gallery media={galleryMedia} />
+            </Suspense>
           </div>
 
           <div className="basis-full lg:basis-2/6">

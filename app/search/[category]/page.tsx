@@ -7,6 +7,7 @@ import ProductGridItems from "components/layout/product-grid-items";
 import ProductPagination from "components/layout/product-pagination";
 import { defaultSort, sorting } from "lib/constants";
 import { getCategory } from "lib/reflow";
+import { Suspense } from "react";
 
 export const runtime = "edge";
 
@@ -50,7 +51,9 @@ export default async function CategoryPage({
           <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <ProductGridItems products={products.data} />
           </Grid>
-          <ProductPagination paginationMeta={products.meta} />
+          <Suspense>
+            <ProductPagination paginationMeta={products.meta} />
+          </Suspense>
         </>
       )}
     </section>

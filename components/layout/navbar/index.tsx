@@ -2,6 +2,7 @@ import LogoSquare from "components/logo-square";
 import { getNavigationMenu } from "lib/reflow";
 import { Menu } from "lib/reflow/types";
 import Link from "next/link";
+import { Suspense } from "react";
 import MobileMenu from "./mobile-menu";
 import Search from "./search";
 const { SITE_NAME } = process.env;
@@ -18,7 +19,9 @@ export default async function Navbar() {
   return (
     <nav className="relative mb-2 flex items-center justify-between p-4 md:px-6">
       <div className="block flex-none md:hidden">
-        <MobileMenu menu={menu} />
+        <Suspense>
+          <MobileMenu menu={menu} />
+        </Suspense>
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-1/2">
@@ -48,7 +51,9 @@ export default async function Navbar() {
         </div>
         <div className="flex w-1/2 items-center justify-end">
           <div className="hidden w-full justify-end md:flex">
-            <Search />
+            <Suspense>
+              <Search />
+            </Suspense>
           </div>
           <div className="ml-4 flex w-10 justify-end">
             <DynamicOpenCart />

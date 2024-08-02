@@ -1,4 +1,5 @@
 import { SortFilterItem } from "lib/constants";
+import { Suspense } from "react";
 import FilterItemDropdown from "./dropdown";
 import { FilterItem } from "./item";
 
@@ -23,7 +24,7 @@ export default function FilterList({
   title?: string;
 }) {
   return (
-    <>
+    <Suspense>
       <nav>
         {title ? (
           <h3 className="hidden text-xs text-neutral-500 md:block">{title}</h3>
@@ -35,6 +36,6 @@ export default function FilterList({
           <FilterItemDropdown list={list} />
         </ul>
       </nav>
-    </>
+    </Suspense>
   );
 }
